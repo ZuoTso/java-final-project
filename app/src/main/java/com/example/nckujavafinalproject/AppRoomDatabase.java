@@ -12,7 +12,7 @@ import java.util.concurrent.Executors;
 @Database(entities = {Restaurant.class}, version = 1, exportSchema = false)
 public abstract class AppRoomDatabase extends RoomDatabase {
 
-    public abstract RestaurantDao restaurantDaoDao();
+    public abstract RestaurantDao restaurantDao();
 
     private static volatile AppRoomDatabase INSTANCE;
     private static final int NUMBER_OF_THREADS = 4;
