@@ -2,9 +2,11 @@ package com.example.nckujavafinalproject;
 
 import android.content.Context;
 
+import androidx.annotation.NonNull;
 import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
+import androidx.sqlite.db.SupportSQLiteDatabase;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -31,4 +33,28 @@ public abstract class AppRoomDatabase extends RoomDatabase {
         }
         return INSTANCE;
     }
+
+    private static RoomDatabase.Callback sRoomDatabaseCallback = new RoomDatabase.Callback() {
+        @Override
+        public void onCreate(@NonNull SupportSQLiteDatabase db) {
+            super.onCreate(db);
+
+            // If you want to keep data through app restarts,
+            // comment out the following block
+            databaseWriteExecutor.execute(() -> {
+                // Populate the database in the background.
+                // If you want to start with more restaurants, just add them.
+                RestaurantDao dao = INSTANCE.restaurantDao();
+                dao.deleteAll();
+
+                // default restaurants
+                Restaurant restaurant = new Restaurant("炒飯");
+                dao.insert(restaurant);
+                restaurant = new Restaurant("麥當勞");
+                dao.insert(restaurant);
+                restaurant = new Restaurant("肯德基");
+                dao.insert(restaurant);
+            });
+        }
+    };
 }
