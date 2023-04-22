@@ -11,7 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class NewRestaurantActivity extends AppCompatActivity {
 
-    public static final String EXTRA_RESTAURANT = "com.example.android.restaurantlistsql.REPLY";
+    public static final String EXTRA_REPLY = "com.example.android.restaurantlistsql.REPLY";
 
     private EditText mEditRestaurantView;
 
@@ -28,7 +28,7 @@ public class NewRestaurantActivity extends AppCompatActivity {
                 setResult(RESULT_CANCELED, replyIntent);
             } else {
                 String restaurant = mEditRestaurantView.getText().toString();
-                replyIntent.putExtra(EXTRA_RESTAURANT, restaurant);
+                replyIntent.putExtra(EXTRA_REPLY, restaurant);
                 setResult(RESULT_OK, replyIntent);
             }
             finish();

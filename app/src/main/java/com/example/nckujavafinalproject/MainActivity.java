@@ -30,35 +30,35 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-//        // Get a new or existing ViewModel from the ViewModelProvider.
-//        mRestaurantViewModel = new ViewModelProvider(this).get(RestaurantViewModel.class);
-//
-//        // Add an observer on the LiveData returned by getAllRestaurants.
-//        // The onChanged() method fires when the observed data changes and the activity is
-//        // in the foreground.
-//        mRestaurantViewModel.getAllRestaurants().observe(this, restaurants -> {
-//            // Update the cached copy of the restaurants in the adapter.
-//            adapter.submitList(restaurants);
-//        });
-//
-//        FloatingActionButton fab = findViewById(R.id.fab);
-//        fab.setOnClickListener(view -> {
-//            Intent intent = new Intent(MainActivity.this, NewRestaurantActivity.class);
-//            startActivityForResult(intent, NEW_RESTAURANT_ACTIVITY_REQUEST_CODE);
-//        });
+        // Get a new or existing ViewModel from the ViewModelProvider.
+        mRestaurantViewModel = new ViewModelProvider(this).get(RestaurantViewModel.class);
+
+        // Add an observer on the LiveData returned by getAllRestaurants.
+        // The onChanged() method fires when the observed data changes and the activity is
+        // in the foreground.
+        mRestaurantViewModel.getAllRestaurants().observe(this, restaurants -> {
+            // Update the cached copy of the restaurants in the adapter.
+            adapter.submitList(restaurants);
+        });
+
+        FloatingActionButton fab = findViewById(R.id.fab);
+        fab.setOnClickListener(view -> {
+            Intent intent = new Intent(MainActivity.this, NewRestaurantActivity.class);
+            startActivityForResult(intent, NEW_RESTAURANT_ACTIVITY_REQUEST_CODE);
+        });
     }
 
-//    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        super.onActivityResult(requestCode, resultCode, data);
-//
-//        if (requestCode == NEW_RESTAURANT_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK) {
-//            Restaurant restaurant = new Restaurant(data.getStringExtra(NewRestaurantActivity.EXTRA_REPLY));
-//            mRestaurantViewModel.insert(restaurant);
-//        } else {
-//            Toast.makeText(
-//                    getApplicationContext(),
-//                    R.string.empty_not_saved,
-//                    Toast.LENGTH_LONG).show();
-//        }
-//    }
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == NEW_RESTAURANT_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK) {
+            Restaurant restaurant = new Restaurant(data.getStringExtra(NewRestaurantActivity.EXTRA_REPLY));
+            mRestaurantViewModel.insert(restaurant);
+        } else {
+            Toast.makeText(
+                    getApplicationContext(),
+                    R.string.empty_not_saved,
+                    Toast.LENGTH_LONG).show();
+        }
+    }
 }
