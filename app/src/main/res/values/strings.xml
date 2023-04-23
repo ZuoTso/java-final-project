@@ -5,7 +5,7 @@
     <string name="first_fragment_label">First Fragment</string>
     <string name="second_fragment_label">Second Fragment</string>
     <string name="next">Next</string>
-    <string name="previous">Previous</string>
+    <string name="previous">上一頁</string>
 
     <string name="hello_first_fragment">Hello first fragment</string>
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
@@ -13,4 +13,13 @@
     <string name="hint_word">Word...</string>
     <string name="button_save">Save</string>
     <string name="empty_not_saved">Word not saved because it is empty.</string>
+    <string name="token_choose">標籤選擇</string>
+    <string name="開始抽">開始抽</string>
+    <string name="no">NO</string>
+    <string name="restaurant_information">餐廳資訊</string>
+    <string name="like_this_choice">結果是否符合預期?</string>
+    <string name="yes">Yes</string>
+    <string name="編輯餐廳">編輯餐廳</string>
+    <string name="編輯標籤">編輯標籤</string>
+    <string name="resultoutput">結果</string>
 </resources>
