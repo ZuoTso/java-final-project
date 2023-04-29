@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<animation-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:drawable="@drawable/lottery_1"
+        android:duration="400" />
+
+    <item
+        android:drawable="@drawable/lottery_2"
+        android:duration="400" />
+
+    <item
+        android:drawable="@drawable/lottery_3"
+        android:duration="400" />
+
+    <item
+        android:drawable="@drawable/lottery_4"
+        android:duration="400" />
+
+    <item
+        android:drawable="@drawable/lottery_5"
+        android:duration="400" />
+
+    <item
+        android:drawable="@drawable/lottery_6"
+        android:duration="400" />
+
+    <item
+        android:drawable="@drawable/lottery_7"
+        android:duration="400" />
+
+    <item
+        android:drawable="@drawable/lottery_8"
+        android:duration="400" />
+
+</animation-list>
