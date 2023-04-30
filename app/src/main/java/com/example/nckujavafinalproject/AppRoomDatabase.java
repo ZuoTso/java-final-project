@@ -11,7 +11,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-@Database(entities = {Restaurant.class}, version = 1, exportSchema = false)
+@Database(entities = {Restaurant.class}, version = 2, exportSchema = false)
 public abstract class AppRoomDatabase extends RoomDatabase {
 
     public abstract RestaurantDao restaurantDao();
@@ -48,11 +48,11 @@ public abstract class AppRoomDatabase extends RoomDatabase {
                 dao.deleteAll();
 
                 // default restaurants
-                Restaurant restaurant = new Restaurant("炒飯");
+                Restaurant restaurant = new Restaurant("炒飯", "");
                 dao.insert(restaurant);
-                restaurant = new Restaurant("麥當勞");
+                restaurant = new Restaurant("麥當勞","");
                 dao.insert(restaurant);
-                restaurant = new Restaurant("肯德基");
+                restaurant = new Restaurant("肯德基","");
                 dao.insert(restaurant);
             });
         }
