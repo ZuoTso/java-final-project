@@ -50,6 +50,7 @@
         android:text="@string/編輯餐廳"
         android:textStyle="bold"
         android:textColor="@color/background"
+        android:onClick="EditRestaurant_onclick"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.1"
