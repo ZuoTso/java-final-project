@@ -6,6 +6,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -42,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
         mRestaurantViewModel.getAllRestaurants().observe(this, restaurants -> {
             // Update the cached copy of the restaurants in the adapter.
             adapter.submitList(restaurants);
+            adapter.setRestaurants(restaurants);
         });
 
         FloatingActionButton fab = findViewById(R.id.fab);
@@ -49,6 +51,31 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(MainActivity.this, NewRestaurantActivity.class);
             startActivityForResult(intent, NEW_RESTAURANT_ACTIVITY_REQUEST_CODE);
         });
+
+        // Add the functionality to swipe items in the
+    // recycler view to delete that item
+        ItemTouchHelper helper = new ItemTouchHelper(
+                new ItemTouchHelper.SimpleCallback(0,
+                        ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+                    @Override
+                    public boolean onMove(RecyclerView recyclerView,
+                                          RecyclerView.ViewHolder viewHolder,
+                                          RecyclerView.ViewHolder target) {
+                        return false;
+                    }
+                    @Override
+                    public void onSwiped(RecyclerView.ViewHolder viewHolder,
+                                         int direction) {
+                        int position = viewHolder.getAdapterPosition();
+                        Restaurant myRestaurant = adapter.getRestaurantAtPosition(position);
+                        Toast.makeText(MainActivity.this, "Deleting " +
+                                myRestaurant.getName(), Toast.LENGTH_LONG).show();
+
+                        // Delete the restaurant
+                        mRestaurantViewModel.deleteRestaurant(myRestaurant);
+                    }
+                });
+        helper.attachToRecyclerView(recyclerView);
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
