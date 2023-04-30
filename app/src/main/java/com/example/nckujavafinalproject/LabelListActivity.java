@@ -6,6 +6,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -42,6 +43,7 @@ public class LabelListActivity extends AppCompatActivity {
         mLabelViewModel.getAllLabels().observe(this, labels -> {
             // Update the cached copy of the labels in the adapter.
             adapter.submitList(labels);
+            adapter.setLabels(labels);
         });
 
         FloatingActionButton fab = findViewById(R.id.labelListFab);
@@ -49,6 +51,35 @@ public class LabelListActivity extends AppCompatActivity {
             Intent intent = new Intent(LabelListActivity.this, NewLabelActivity.class);
             startActivityForResult(intent, NEW_LABEL_ACTIVITY_REQUEST_CODE);
         });
+
+        // swipe to delete label
+        // Add the functionality to swipe items in the
+// recycler view to delete that item
+        ItemTouchHelper helper = new ItemTouchHelper(
+                new ItemTouchHelper.SimpleCallback(0,
+                        ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+                    @Override
+                    public boolean onMove(RecyclerView recyclerView,
+                                          RecyclerView.ViewHolder viewHolder,
+                                          RecyclerView.ViewHolder target) {
+                        return false;
+                    }
+
+
+                    @Override
+                    public void onSwiped(RecyclerView.ViewHolder viewHolder,
+                                         int direction) {
+                        int position = viewHolder.getAdapterPosition();
+                        Label myLabel = adapter.getLabelAtPosition(position);
+                        Toast.makeText(LabelListActivity.this, "Deleting " +
+                                myLabel.getName(), Toast.LENGTH_LONG).show();
+
+                        // Delete the word
+                        mLabelViewModel.deleteLabel(myLabel);
+                    }
+                });
+
+        helper.attachToRecyclerView(recyclerView);
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {

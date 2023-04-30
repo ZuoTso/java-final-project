@@ -1,6 +1,7 @@
 package com.example.nckujavafinalproject;
 
 import android.app.Application;
+import android.os.AsyncTask;
 
 import androidx.lifecycle.LiveData;
 
@@ -28,5 +29,24 @@ public class LabelRepository {
         AppRoomDatabase.databaseWriteExecutor.execute(() -> {
             mLabelDao.insert(label);
         });
+    }
+
+    // delete label async task
+    private static class DeleteLabelAsyncTask extends AsyncTask<Label, Void, Void> {
+        private LabelDao mAsyncTaskDao;
+
+        DeleteLabelAsyncTask(LabelDao dao) {
+            mAsyncTaskDao = dao;
+        }
+
+        @Override
+        protected Void doInBackground(final Label... params) {
+            mAsyncTaskDao.deleteLabel(params[0]);
+            return null;
+        }
+    }
+
+    public void deleteLabel(Label label) {
+        new DeleteLabelAsyncTask(mLabelDao).execute(label);
     }
 }

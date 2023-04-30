@@ -26,4 +26,6 @@ public class LabelViewModel extends AndroidViewModel {
     public void insert(Label label) {
         mRepository.insert(label);
     }
+
+    public void deleteLabel(Label label) {mRepository.deleteLabel(label);}
 }
