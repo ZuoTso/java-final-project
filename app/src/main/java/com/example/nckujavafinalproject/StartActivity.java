@@ -24,4 +24,11 @@ public class StartActivity extends AppCompatActivity {
         intent.setClass(StartActivity.this, MainActivity.class);
         startActivity(intent);
     }
+
+    // switch to label page
+    public void EditLabel_onclick(View view){
+        Intent intent = new Intent();
+        intent.setClass(StartActivity.this, LabelList.class);
+        startActivity(intent);
+    }
 }
