@@ -25,6 +25,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // NOTE: un-comment this line to reset database
+//        getApplicationContext().deleteDatabase("database");
+
         RecyclerView recyclerView = findViewById(R.id.recyclerview);
         final RestaurantListAdapter adapter = new RestaurantListAdapter(new RestaurantListAdapter.RestaurantDiff());
         recyclerView.setAdapter(adapter);
