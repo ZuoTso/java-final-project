@@ -22,4 +22,5 @@
     <string name="編輯餐廳">編輯餐廳</string>
     <string name="編輯標籤">編輯標籤</string>
     <string name="resultoutput">結果</string>
+    <string name="title_activity_start">StartActivity</string>
 </resources>
