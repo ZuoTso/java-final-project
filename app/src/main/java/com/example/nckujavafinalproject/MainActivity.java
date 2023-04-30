@@ -6,26 +6,26 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
-public class StartActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_start);
+        setContentView(R.layout.activity_main);
     }
 
     // to restaurant page button
     public void EditRestaurant_onclick(View view){
         // switch to restaurant page
         Intent intent = new Intent();
-        intent.setClass(StartActivity.this, RestaurantListActivity.class);
+        intent.setClass(MainActivity.this, RestaurantListActivity.class);
         startActivity(intent);
     }
 
     // switch to label page
     public void EditLabel_onclick(View view){
         Intent intent = new Intent();
-        intent.setClass(StartActivity.this, LabelListActivity.class);
+        intent.setClass(MainActivity.this, LabelListActivity.class);
         startActivity(intent);
     }
 }
