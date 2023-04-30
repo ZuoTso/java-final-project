@@ -9,54 +9,54 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.nckujavafinalproject.Restaurant;
-import com.example.nckujavafinalproject.RestaurantListAdapter;
-import com.example.nckujavafinalproject.RestaurantViewModel;
+import com.example.nckujavafinalproject.Label;
+import com.example.nckujavafinalproject.LabelListAdapter;
+import com.example.nckujavafinalproject.LabelViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-public class MainActivity extends AppCompatActivity {
+public class LabelListActivity extends AppCompatActivity {
 
-    public static final int NEW_RESTAURANT_ACTIVITY_REQUEST_CODE = 1;
+    public static final int NEW_LABEL_ACTIVITY_REQUEST_CODE = 1;
 
-    private RestaurantViewModel mRestaurantViewModel;
+    private LabelViewModel mLabelViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_label_list);
 
         // NOTE: un-comment this line to reset database
 //        getApplicationContext().deleteDatabase("database");
 
         RecyclerView recyclerView = findViewById(R.id.recyclerview);
-        final RestaurantListAdapter adapter = new RestaurantListAdapter(new RestaurantListAdapter.RestaurantDiff());
+        final LabelListAdapter adapter = new LabelListAdapter(new LabelListAdapter.LabelDiff());
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         // Get a new or existing ViewModel from the ViewModelProvider.
-        mRestaurantViewModel = new ViewModelProvider(this).get(RestaurantViewModel.class);
+        mLabelViewModel = new ViewModelProvider(this).get(LabelViewModel.class);
 
-        // Add an observer on the LiveData returned by getAllRestaurants.
+        // Add an observer on the LiveData returned by getAllLabels.
         // The onChanged() method fires when the observed data changes and the activity is
         // in the foreground.
-        mRestaurantViewModel.getAllRestaurants().observe(this, restaurants -> {
-            // Update the cached copy of the restaurants in the adapter.
-            adapter.submitList(restaurants);
+        mLabelViewModel.getAllLabels().observe(this, labels -> {
+            // Update the cached copy of the labels in the adapter.
+            adapter.submitList(labels);
         });
 
-        FloatingActionButton fab = findViewById(R.id.fab);
+        FloatingActionButton fab = findViewById(R.id.labelListFab);
         fab.setOnClickListener(view -> {
-            Intent intent = new Intent(MainActivity.this, NewRestaurantActivity.class);
-            startActivityForResult(intent, NEW_RESTAURANT_ACTIVITY_REQUEST_CODE);
+            Intent intent = new Intent(LabelListActivity.this, NewLabelActivity.class);
+            startActivityForResult(intent, NEW_LABEL_ACTIVITY_REQUEST_CODE);
         });
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == NEW_RESTAURANT_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK) {
-            Restaurant restaurant = new Restaurant(data.getStringExtra(NewRestaurantActivity.EXTRA_REPLY),"");
-            mRestaurantViewModel.insert(restaurant);
+        if (requestCode == NEW_LABEL_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK) {
+            Label label = new Label(data.getStringExtra(NewLabelActivity.EXTRA_REPLY));
+            mLabelViewModel.insert(label);
         } else {
             Toast.makeText(
                     getApplicationContext(),
