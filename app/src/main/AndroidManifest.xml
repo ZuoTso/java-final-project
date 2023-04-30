@@ -17,7 +17,7 @@
         <activity android:name=".NewLabelActivity"
             android:exported="false" />
         <activity
-            android:name=".MainActivity"
+            android:name=".RestaurantListActivity"
             android:exported="false" />
         <activity
             android:name=".NewRestaurantActivity"

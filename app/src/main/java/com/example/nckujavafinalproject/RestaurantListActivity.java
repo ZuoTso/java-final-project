@@ -10,12 +10,9 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.nckujavafinalproject.Restaurant;
-import com.example.nckujavafinalproject.RestaurantListAdapter;
-import com.example.nckujavafinalproject.RestaurantViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-public class MainActivity extends AppCompatActivity {
+public class RestaurantListActivity extends AppCompatActivity {
 
     public static final int NEW_RESTAURANT_ACTIVITY_REQUEST_CODE = 1;
 
@@ -24,7 +21,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_restaurant_list);
 
         // NOTE: un-comment this line to reset database
 //        getApplicationContext().deleteDatabase("database");
@@ -48,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
 
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(view -> {
-            Intent intent = new Intent(MainActivity.this, NewRestaurantActivity.class);
+            Intent intent = new Intent(RestaurantListActivity.this, NewRestaurantActivity.class);
             startActivityForResult(intent, NEW_RESTAURANT_ACTIVITY_REQUEST_CODE);
         });
 
@@ -68,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
                                          int direction) {
                         int position = viewHolder.getAdapterPosition();
                         Restaurant myRestaurant = adapter.getRestaurantAtPosition(position);
-                        Toast.makeText(MainActivity.this, "Deleting " +
+                        Toast.makeText(RestaurantListActivity.this, "Deleting " +
                                 myRestaurant.getName(), Toast.LENGTH_LONG).show();
 
                         // Delete the restaurant
