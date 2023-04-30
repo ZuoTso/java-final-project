@@ -45,23 +45,23 @@ public class LabelListActivity extends AppCompatActivity {
         });
 
         FloatingActionButton fab = findViewById(R.id.labelListFab);
-//        fab.setOnClickListener(view -> {
-//            Intent intent = new Intent(LabelListActivity.this, NewLabelActivity.class);
-//            startActivityForResult(intent, NEW_LABEL_ACTIVITY_REQUEST_CODE);
-//        });
+        fab.setOnClickListener(view -> {
+            Intent intent = new Intent(LabelListActivity.this, NewLabelActivity.class);
+            startActivityForResult(intent, NEW_LABEL_ACTIVITY_REQUEST_CODE);
+        });
     }
 
-//    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        super.onActivityResult(requestCode, resultCode, data);
-//
-//        if (requestCode == NEW_LABEL_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK) {
-//            Label label = new Label(data.getStringExtra(NewLabelActivity.EXTRA_REPLY),"");
-//            mLabelViewModel.insert(label);
-//        } else {
-//            Toast.makeText(
-//                    getApplicationContext(),
-//                    R.string.empty_not_saved,
-//                    Toast.LENGTH_LONG).show();
-//        }
-//    }
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == NEW_LABEL_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK) {
+            Label label = new Label(data.getStringExtra(NewLabelActivity.EXTRA_REPLY));
+            mLabelViewModel.insert(label);
+        } else {
+            Toast.makeText(
+                    getApplicationContext(),
+                    R.string.empty_not_saved,
+                    Toast.LENGTH_LONG).show();
+        }
+    }
 }
