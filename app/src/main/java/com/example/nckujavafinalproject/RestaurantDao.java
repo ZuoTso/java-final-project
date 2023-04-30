@@ -2,6 +2,7 @@ package com.example.nckujavafinalproject;
 
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
+import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
@@ -20,4 +21,7 @@ public interface RestaurantDao {
     // sorted alphabetically
     @Query("SELECT * FROM restaurant_table ORDER by name ASC")
     LiveData<List<Restaurant>> getAlphaSortedRestaurant();
+
+    @Delete
+    void deleteRestaurant(Restaurant restaurant);
 }

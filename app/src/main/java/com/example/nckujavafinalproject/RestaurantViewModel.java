@@ -26,4 +26,6 @@ public class RestaurantViewModel extends AndroidViewModel {
     public void insert(Restaurant restaurant) {
         mRepository.insert(restaurant);
     }
+
+    public void deleteRestaurant(Restaurant restaurant) {mRepository.deleteRestaurant(restaurant);}
 }

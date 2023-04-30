@@ -1,6 +1,7 @@
 package com.example.nckujavafinalproject;
 
 import android.app.Application;
+import android.os.AsyncTask;
 
 import androidx.lifecycle.LiveData;
 
@@ -28,5 +29,23 @@ public class RestaurantRepository {
         AppRoomDatabase.databaseWriteExecutor.execute(() -> {
             mRestaurantDao.insert(restaurant);
         });
+    }
+
+    private static class deleteRestaurantAsyncTask extends AsyncTask<Restaurant, Void, Void> {
+        private RestaurantDao mAsyncTaskDao;
+
+        deleteRestaurantAsyncTask(RestaurantDao dao) {
+            mAsyncTaskDao = dao;
+        }
+
+        @Override
+        protected Void doInBackground(final Restaurant... params) {
+            mAsyncTaskDao.deleteRestaurant(params[0]);
+            return null;
+        }
+    }
+
+    public void deleteRestaurant(Restaurant restaurant) {
+        new deleteRestaurantAsyncTask(mRestaurantDao).execute(restaurant);
     }
 }
