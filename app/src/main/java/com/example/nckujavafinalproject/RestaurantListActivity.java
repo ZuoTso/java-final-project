@@ -99,7 +99,8 @@ public class RestaurantListActivity extends AppCompatActivity {
 
                         // switch to new activity
                         Intent intent = new Intent(RestaurantListActivity.this, UpdateRestaurantActivity.class);
-
+                        // pass restaurant to update activity
+                        intent.putExtra("restaurant",myRestaurant);
                         //
                         startActivityForResult(intent, NEW_RESTAURANT_ACTIVITY_REQUEST_CODE);
                     }
