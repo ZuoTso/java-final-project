@@ -7,5 +7,26 @@
     android:layout_height="match_parent"
     tools:context=".UpdateRestaurantActivity"
     android:id="@+id/label_checkbox_list">
-<!--    dynamic checkbox in java file -->
+<!--    name of restaurant-->
+
+    <TextView
+        android:id="@+id/restaurant_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="2sp"
+        android:text="TextView"
+        android:textAlignment="center"
+        android:textSize="34sp"
+        android:textStyle="bold" />
+
+    <Button
+        android:id="@+id/button_save"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"
+        android:text="@string/button_save"
+        android:layout_margin="@dimen/big_padding"
+        android:textColor="@color/buttonLabel" />
+
+    <!--    dynamic checkbox in java file -->
 </LinearLayout>

@@ -8,6 +8,7 @@ import android.util.Log;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 
@@ -32,6 +33,8 @@ public class UpdateRestaurantActivity extends AppCompatActivity {
         LinearLayout linearLayout=findViewById(R.id.label_checkbox_list);
         final LabelListAdapter adapter = new LabelListAdapter(new LabelListAdapter.LabelDiff());
 
+        final TextView restaurantName=findViewById(R.id.restaurant_name);
+        restaurantName.setText(restaurant.getName());
         // dynamically generate label list
 
         mLabelViewModel = new ViewModelProvider(this).get(LabelViewModel.class);
