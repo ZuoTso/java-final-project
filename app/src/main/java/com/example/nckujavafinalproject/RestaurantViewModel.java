@@ -28,4 +28,6 @@ public class RestaurantViewModel extends AndroidViewModel {
     }
 
     public void deleteRestaurant(Restaurant restaurant) {mRepository.deleteRestaurant(restaurant);}
+
+    public void updateRestaurant(Restaurant restaurant){mRepository.updateRestaurant((restaurant));}
 }
