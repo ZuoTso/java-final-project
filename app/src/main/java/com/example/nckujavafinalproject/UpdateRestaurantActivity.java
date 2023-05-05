@@ -14,6 +14,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class UpdateRestaurantActivity extends AppCompatActivity {
 
@@ -34,7 +35,10 @@ public class UpdateRestaurantActivity extends AppCompatActivity {
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             restaurant = extras.getParcelable("restaurant");
-            Log.v("INFO",restaurant.getLabels());
+            // default labels
+            checkedLabels=new ArrayList<>(
+                    Arrays.asList(restaurant.getLabels().split("`"))
+            );
         }
 
         LinearLayout linearLayout = findViewById(R.id.label_checkbox_list);
@@ -46,10 +50,14 @@ public class UpdateRestaurantActivity extends AppCompatActivity {
         mLabelViewModel = new ViewModelProvider(this).get(LabelViewModel.class);
         mLabelViewModel.getAllLabels().observe(this, labels -> {
             for (int i = 0; i < labels.size(); i++) {
-
+                String text=labels.get(i).getName();
                 CheckBox checkBox = new CheckBox(getApplicationContext());
-                checkBox.setText(labels.get(i).getName());
-                // TODO: if the restaurant has the label, set it to true(default value)
+                checkBox.setText(text);
+
+                //  set default labels to checked
+                if(checkedLabels.contains(text)){
+                    checkBox.setChecked((true));
+                }
                 checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                     @Override
                     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
