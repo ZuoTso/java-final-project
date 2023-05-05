@@ -63,5 +63,6 @@ public class Restaurant implements Parcelable {
     @Override
     public void writeToParcel(@NonNull Parcel dest, int flags) {
         dest.writeString(name);
+        dest.writeString(labels);
     }
 }

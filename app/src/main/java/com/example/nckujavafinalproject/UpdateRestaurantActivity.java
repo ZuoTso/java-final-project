@@ -3,8 +3,11 @@ package com.example.nckujavafinalproject;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
@@ -14,8 +17,11 @@ import java.util.ArrayList;
 
 public class UpdateRestaurantActivity extends AppCompatActivity {
 
+    public static final String EXTRA_REPLY_NAME = "com.example.android.restaurantlistsql.REPLY.update.name";
+    public static final String EXTRA_REPLY_LABELS = "com.example.android.restaurantlistsql.REPLY.update.labels";
+
     private LabelViewModel mLabelViewModel;
-    private ArrayList<String>checkedLabels=new ArrayList<>();
+    private ArrayList<String> checkedLabels = new ArrayList<>();
     private String newLabelStr;
     private Restaurant restaurant; // the one updating
 
@@ -28,12 +34,12 @@ public class UpdateRestaurantActivity extends AppCompatActivity {
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             restaurant = extras.getParcelable("restaurant");
+            Log.v("INFO",restaurant.getLabels());
         }
 
-        LinearLayout linearLayout=findViewById(R.id.label_checkbox_list);
-        final LabelListAdapter adapter = new LabelListAdapter(new LabelListAdapter.LabelDiff());
+        LinearLayout linearLayout = findViewById(R.id.label_checkbox_list);
 
-        final TextView restaurantName=findViewById(R.id.restaurant_name);
+        final TextView restaurantName = findViewById(R.id.restaurant_name);
         restaurantName.setText(restaurant.getName());
         // dynamically generate label list
 
@@ -57,7 +63,18 @@ public class UpdateRestaurantActivity extends AppCompatActivity {
 
                 linearLayout.addView(checkBox);
             }
+        });
 
+        final Button button = findViewById(R.id.button_save);
+        button.setOnClickListener(view -> {
+            Intent replyIntent = new Intent();
+            String name = restaurant.getName();
+            String newLabels = String.join("`", checkedLabels);
+
+            replyIntent.putExtra(EXTRA_REPLY_NAME, name);
+            replyIntent.putExtra(EXTRA_REPLY_LABELS, newLabels);
+            setResult(RESULT_OK, replyIntent);
+            finish();
         });
     }
 }

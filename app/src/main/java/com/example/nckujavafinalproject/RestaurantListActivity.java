@@ -2,6 +2,7 @@ package com.example.nckujavafinalproject;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -101,8 +102,7 @@ public class RestaurantListActivity extends AppCompatActivity {
                         Intent intent = new Intent(RestaurantListActivity.this, UpdateRestaurantActivity.class);
                         // pass restaurant to update activity
                         intent.putExtra("restaurant",myRestaurant);
-                        //
-                        startActivityForResult(intent, NEW_RESTAURANT_ACTIVITY_REQUEST_CODE);
+                        startActivityForResult(intent, UPDATE_RESTAURANT_ACTIVITY_REQUEST_CODE);
                     }
                 });
         updateHelper.attachToRecyclerView(recyclerView);
@@ -114,7 +114,16 @@ public class RestaurantListActivity extends AppCompatActivity {
         if (requestCode == NEW_RESTAURANT_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK) {
             Restaurant restaurant = new Restaurant(data.getStringExtra(NewRestaurantActivity.EXTRA_REPLY),"");
             mRestaurantViewModel.insert(restaurant);
-        } else {
+        } else if(requestCode==UPDATE_RESTAURANT_ACTIVITY_REQUEST_CODE && resultCode==RESULT_OK) {
+            Log.v("INFO","updating");
+            String name=data.getStringExtra(UpdateRestaurantActivity.EXTRA_REPLY_NAME);
+            String labels=data.getStringExtra(UpdateRestaurantActivity.EXTRA_REPLY_LABELS);
+
+            Log.v("INFO",name);
+            Log.v("INFO",labels);
+            Restaurant updatedRestaurant=new Restaurant(name,labels);
+            mRestaurantViewModel.insert(updatedRestaurant); // old one will be replaced
+        }else {
             Toast.makeText(
                     getApplicationContext(),
                     R.string.empty_not_saved,
