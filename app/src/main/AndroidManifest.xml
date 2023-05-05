@@ -12,9 +12,13 @@
         android:theme="@style/Theme.NCKUJavaFinalProject"
         tools:targetApi="31">
         <activity
+            android:name=".UpdateRestaurantActivity"
+            android:exported="false" />
+        <activity
             android:name=".LabelListActivity"
             android:exported="false" />
-        <activity android:name=".NewLabelActivity"
+        <activity
+            android:name=".NewLabelActivity"
             android:exported="false" />
         <activity
             android:name=".RestaurantListActivity"

@@ -2,6 +2,7 @@ package com.example.nckujavafinalproject;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -9,12 +10,14 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.room.Update;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class RestaurantListActivity extends AppCompatActivity {
 
     public static final int NEW_RESTAURANT_ACTIVITY_REQUEST_CODE = 1;
+    public static final int UPDATE_RESTAURANT_ACTIVITY_REQUEST_CODE=2;
 
     private RestaurantViewModel mRestaurantViewModel;
 
@@ -49,11 +52,11 @@ public class RestaurantListActivity extends AppCompatActivity {
             startActivityForResult(intent, NEW_RESTAURANT_ACTIVITY_REQUEST_CODE);
         });
 
-        // Add the functionality to swipe items in the
+    // Add the functionality to swipe right in the
     // recycler view to delete that item
-        ItemTouchHelper helper = new ItemTouchHelper(
+        ItemTouchHelper deleteHelper = new ItemTouchHelper(
                 new ItemTouchHelper.SimpleCallback(0,
-                        ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+                        ItemTouchHelper.RIGHT) {
                     @Override
                     public boolean onMove(RecyclerView recyclerView,
                                           RecyclerView.ViewHolder viewHolder,
@@ -72,7 +75,37 @@ public class RestaurantListActivity extends AppCompatActivity {
                         mRestaurantViewModel.deleteRestaurant(myRestaurant);
                     }
                 });
-        helper.attachToRecyclerView(recyclerView);
+        deleteHelper.attachToRecyclerView(recyclerView);
+
+        // swipe left to update
+        ItemTouchHelper updateHelper = new ItemTouchHelper(
+                new ItemTouchHelper.SimpleCallback(0,
+                        ItemTouchHelper.LEFT) {
+                    @Override
+                    public boolean onMove(RecyclerView recyclerView,
+                                          RecyclerView.ViewHolder viewHolder,
+                                          RecyclerView.ViewHolder target) {
+                        return false;
+                    }
+                    @Override
+                    public void onSwiped(RecyclerView.ViewHolder viewHolder,
+                                         int direction) {
+                        int position = viewHolder.getAdapterPosition();
+                        Restaurant myRestaurant = adapter.getRestaurantAtPosition(position);
+                        Toast.makeText(RestaurantListActivity.this, "Updating " +
+                                myRestaurant.getName(), Toast.LENGTH_LONG).show();
+
+
+                        // TODO: call function to update the restaurant
+
+                        // switch to new activity
+                        Intent intent = new Intent(RestaurantListActivity.this, UpdateRestaurantActivity.class);
+                        // pass restaurant to update activity
+                        intent.putExtra("restaurant",myRestaurant);
+                        startActivityForResult(intent, UPDATE_RESTAURANT_ACTIVITY_REQUEST_CODE);
+                    }
+                });
+        updateHelper.attachToRecyclerView(recyclerView);
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -81,7 +114,16 @@ public class RestaurantListActivity extends AppCompatActivity {
         if (requestCode == NEW_RESTAURANT_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK) {
             Restaurant restaurant = new Restaurant(data.getStringExtra(NewRestaurantActivity.EXTRA_REPLY),"");
             mRestaurantViewModel.insert(restaurant);
-        } else {
+        } else if(requestCode==UPDATE_RESTAURANT_ACTIVITY_REQUEST_CODE && resultCode==RESULT_OK) {
+            Log.v("INFO","updating");
+            String name=data.getStringExtra(UpdateRestaurantActivity.EXTRA_REPLY_NAME);
+            String labels=data.getStringExtra(UpdateRestaurantActivity.EXTRA_REPLY_LABELS);
+
+            Log.v("INFO",name);
+            Log.v("INFO",labels);
+            Restaurant updatedRestaurant=new Restaurant(name,labels);
+            mRestaurantViewModel.insert(updatedRestaurant); // old one will be replaced
+        }else {
             Toast.makeText(
                     getApplicationContext(),
                     R.string.empty_not_saved,
