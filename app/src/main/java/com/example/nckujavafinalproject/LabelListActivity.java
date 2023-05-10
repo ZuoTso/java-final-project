@@ -1,21 +1,33 @@
 package com.example.nckujavafinalproject;
 
 import android.content.Intent;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.nckujavafinalproject.Label;
-import com.example.nckujavafinalproject.LabelListAdapter;
-import com.example.nckujavafinalproject.LabelViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class LabelListActivity extends AppCompatActivity {
+
+    private enum SwipeDirection {
+        LEFT,
+        RIGHT
+    }
 
     public static final int NEW_LABEL_ACTIVITY_REQUEST_CODE = 1;
 
@@ -77,9 +89,78 @@ public class LabelListActivity extends AppCompatActivity {
                         // Delete the word
                         mLabelViewModel.deleteLabel(myLabel);
                     }
+
+                    @Override
+                    public void onChildDraw(@NonNull Canvas c, @NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
+                        if (dX > 0) {
+                            // RIGHT swipe
+                            setDeleteIcon(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive, SwipeDirection.RIGHT);
+
+                        } else {
+                            // LEFT swipe
+                            setDeleteIcon(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive, SwipeDirection.LEFT);
+                        }
+                        super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
+                    }
                 });
 
         helper.attachToRecyclerView(recyclerView);
+    }
+
+    private void setDeleteIcon(Canvas c, RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive, SwipeDirection swipeDirection) {
+        Paint mClearPaint = new Paint();
+        mClearPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
+        ColorDrawable mBackground = new ColorDrawable();
+        int backgroundColor = Color.parseColor("#b80f0a");
+        Drawable deleteDrawable = ContextCompat.getDrawable(this, R.drawable.baseline_delete_24);
+        int intrinsicWidth = deleteDrawable.getIntrinsicWidth();
+        int intrinsicHeight = deleteDrawable.getIntrinsicHeight();
+
+        View itemView = viewHolder.itemView;
+        int itemHeight = itemView.getHeight();
+
+        boolean isCancelled = dX == 0 && !isCurrentlyActive;
+
+        if (isCancelled) {
+            if (swipeDirection == SwipeDirection.LEFT) {
+                c.drawRect(itemView.getRight() + dX, (float) itemView.getTop(),
+                        (float) itemView.getRight(), (float) itemView.getBottom(), mClearPaint);
+            } else if (swipeDirection == SwipeDirection.RIGHT) {
+                c.drawRect((float) itemView.getRight(), (float) itemView.getTop(),
+                        itemView.getRight() + dX, (float) itemView.getBottom(), mClearPaint);
+            }
+
+            return;
+
+        }
+
+        mBackground.setColor(backgroundColor);
+
+
+        if (swipeDirection == SwipeDirection.LEFT) {
+            mBackground.setBounds(itemView.getRight(),
+                    itemView.getTop(), itemView.getRight() + (int) dX, itemView.getBottom());
+        } else {
+            mBackground.setBounds(itemView.getLeft(),
+                    itemView.getTop(), itemView.getLeft() + (int) dX, itemView.getBottom());
+        }
+        mBackground.draw(c);
+
+        // NOTE: code for swipe left
+        int deleteIconTop = itemView.getTop() + (itemHeight - intrinsicHeight) / 2;
+        int deleteIconMargin = (itemHeight - intrinsicHeight) / 2;
+        int deleteIconLeft = itemView.getRight() - deleteIconMargin - intrinsicWidth;
+        int deleteIconRight = itemView.getRight() - deleteIconMargin;
+        int deleteIconBottom = deleteIconTop + intrinsicHeight;
+
+        // NOTE: code for swipe right
+        if (swipeDirection == SwipeDirection.RIGHT) {
+            deleteIconLeft = itemView.getLeft() + deleteIconMargin;
+            deleteIconRight = itemView.getLeft() + deleteIconMargin + intrinsicWidth;
+        }
+
+        deleteDrawable.setBounds(deleteIconLeft, deleteIconTop, deleteIconRight, deleteIconBottom);
+        deleteDrawable.draw(c);
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
