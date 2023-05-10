@@ -118,8 +118,52 @@ public class RestaurantListActivity extends AppCompatActivity {
                         intent.putExtra("restaurant", myRestaurant);
                         startActivityForResult(intent, UPDATE_RESTAURANT_ACTIVITY_REQUEST_CODE);
                     }
+
+                    @Override
+                    public void onChildDraw(@NonNull Canvas c, @NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
+                        setEditIcon(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
+                        super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
+                    }
                 });
         updateHelper.attachToRecyclerView(recyclerView);
+    }
+
+    // for swipe left
+    private void setEditIcon(Canvas c, RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
+        Paint mClearPaint = new Paint();
+        mClearPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
+        ColorDrawable mBackground = new ColorDrawable();
+        int backgroundColor = Color.parseColor("#4ca825");
+        Drawable deleteDrawable = ContextCompat.getDrawable(this, R.drawable.baseline_edit_24);
+        int intrinsicWidth = deleteDrawable.getIntrinsicWidth();
+        int intrinsicHeight = deleteDrawable.getIntrinsicHeight();
+
+        View itemView = viewHolder.itemView;
+        int itemHeight = itemView.getHeight();
+
+        boolean isCancelled = dX == 0 && !isCurrentlyActive;
+
+        if (isCancelled) {
+            c.drawRect(itemView.getRight() + dX, (float) itemView.getTop(),
+                    (float) itemView.getRight(), (float) itemView.getBottom(), mClearPaint);
+            return;
+        }
+
+        mBackground.setColor(backgroundColor);
+
+
+        mBackground.setBounds(itemView.getRight(),
+                itemView.getTop(), itemView.getRight() + (int) dX, itemView.getBottom());
+        mBackground.draw(c);
+
+        int deleteIconTop = itemView.getTop() + (itemHeight - intrinsicHeight) / 2;
+        int deleteIconMargin = (itemHeight - intrinsicHeight) / 2;
+        int deleteIconLeft = itemView.getRight() - deleteIconMargin - intrinsicWidth;
+        int deleteIconRight = itemView.getRight() - deleteIconMargin;
+        int deleteIconBottom = deleteIconTop + intrinsicHeight;
+
+        deleteDrawable.setBounds(deleteIconLeft, deleteIconTop, deleteIconRight, deleteIconBottom);
+        deleteDrawable.draw(c);
     }
 
     // for swipe right
