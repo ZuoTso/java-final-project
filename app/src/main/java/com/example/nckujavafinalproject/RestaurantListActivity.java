@@ -1,11 +1,21 @@
 package com.example.nckujavafinalproject;
 
 import android.content.Intent;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -17,7 +27,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 public class RestaurantListActivity extends AppCompatActivity {
 
     public static final int NEW_RESTAURANT_ACTIVITY_REQUEST_CODE = 1;
-    public static final int UPDATE_RESTAURANT_ACTIVITY_REQUEST_CODE=2;
+    public static final int UPDATE_RESTAURANT_ACTIVITY_REQUEST_CODE = 2;
 
     private RestaurantViewModel mRestaurantViewModel;
 
@@ -52,8 +62,7 @@ public class RestaurantListActivity extends AppCompatActivity {
             startActivityForResult(intent, NEW_RESTAURANT_ACTIVITY_REQUEST_CODE);
         });
 
-    // Add the functionality to swipe right in the
-    // recycler view to delete that item
+        // swipe right to delete
         ItemTouchHelper deleteHelper = new ItemTouchHelper(
                 new ItemTouchHelper.SimpleCallback(0,
                         ItemTouchHelper.RIGHT) {
@@ -63,6 +72,7 @@ public class RestaurantListActivity extends AppCompatActivity {
                                           RecyclerView.ViewHolder target) {
                         return false;
                     }
+
                     @Override
                     public void onSwiped(RecyclerView.ViewHolder viewHolder,
                                          int direction) {
@@ -73,6 +83,12 @@ public class RestaurantListActivity extends AppCompatActivity {
 
                         // Delete the restaurant
                         mRestaurantViewModel.deleteRestaurant(myRestaurant);
+                    }
+
+                    @Override
+                    public void onChildDraw(@NonNull Canvas c, @NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
+                        setDeleteIcon(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
+                        super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
                     }
                 });
         deleteHelper.attachToRecyclerView(recyclerView);
@@ -87,6 +103,7 @@ public class RestaurantListActivity extends AppCompatActivity {
                                           RecyclerView.ViewHolder target) {
                         return false;
                     }
+
                     @Override
                     public void onSwiped(RecyclerView.ViewHolder viewHolder,
                                          int direction) {
@@ -95,32 +112,67 @@ public class RestaurantListActivity extends AppCompatActivity {
                         Toast.makeText(RestaurantListActivity.this, "Updating " +
                                 myRestaurant.getName(), Toast.LENGTH_LONG).show();
 
-
-                        // TODO: call function to update the restaurant
-
                         // switch to new activity
                         Intent intent = new Intent(RestaurantListActivity.this, UpdateRestaurantActivity.class);
                         // pass restaurant to update activity
-                        intent.putExtra("restaurant",myRestaurant);
+                        intent.putExtra("restaurant", myRestaurant);
                         startActivityForResult(intent, UPDATE_RESTAURANT_ACTIVITY_REQUEST_CODE);
                     }
                 });
         updateHelper.attachToRecyclerView(recyclerView);
     }
 
+    // for swipe right
+    private void setDeleteIcon(Canvas c, RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
+        Paint mClearPaint = new Paint();
+        mClearPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
+        ColorDrawable mBackground = new ColorDrawable();
+        int backgroundColor = Color.parseColor("#b80f0a");
+        Drawable deleteDrawable = ContextCompat.getDrawable(this, R.drawable.baseline_delete_24);
+        int intrinsicWidth = deleteDrawable.getIntrinsicWidth();
+        int intrinsicHeight = deleteDrawable.getIntrinsicHeight();
+
+        View itemView = viewHolder.itemView;
+        int itemHeight = itemView.getHeight();
+
+        boolean isCancelled = dX == 0 && !isCurrentlyActive;
+
+        if (isCancelled) {
+            c.drawRect((float) itemView.getRight(), (float) itemView.getTop(),
+                    itemView.getRight() + dX, (float) itemView.getBottom(), mClearPaint);
+            return;
+        }
+
+        mBackground.setColor(backgroundColor);
+
+
+        mBackground.setBounds(itemView.getLeft(),
+                itemView.getTop(), itemView.getLeft() + (int) dX, itemView.getBottom());
+        mBackground.draw(c);
+
+        int deleteIconTop = itemView.getTop() + (itemHeight - intrinsicHeight) / 2;
+        int deleteIconMargin = (itemHeight - intrinsicHeight) / 2;
+        int deleteIconLeft = itemView.getLeft() + deleteIconMargin;
+        int deleteIconRight = itemView.getLeft() + deleteIconMargin + intrinsicWidth;
+        int deleteIconBottom = deleteIconTop + intrinsicHeight;
+
+        deleteDrawable.setBounds(deleteIconLeft, deleteIconTop, deleteIconRight, deleteIconBottom);
+        deleteDrawable.draw(c);
+    }
+
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == NEW_RESTAURANT_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK) {
-            Restaurant restaurant = new Restaurant(data.getStringExtra(NewRestaurantActivity.EXTRA_REPLY),"");
+            Restaurant restaurant = new Restaurant(data.getStringExtra(NewRestaurantActivity.EXTRA_REPLY), "");
             mRestaurantViewModel.insert(restaurant);
-        } else if(requestCode==UPDATE_RESTAURANT_ACTIVITY_REQUEST_CODE && resultCode==RESULT_OK) {
-            String name=data.getStringExtra(UpdateRestaurantActivity.EXTRA_REPLY_NAME);
-            String labels=data.getStringExtra(UpdateRestaurantActivity.EXTRA_REPLY_LABELS);
+        } else if (requestCode == UPDATE_RESTAURANT_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK) {
+            String name = data.getStringExtra(UpdateRestaurantActivity.EXTRA_REPLY_NAME);
+            String labels = data.getStringExtra(UpdateRestaurantActivity.EXTRA_REPLY_LABELS);
 
-            Restaurant updatedRestaurant=new Restaurant(name,labels);
+            Restaurant updatedRestaurant = new Restaurant(name, labels);
             mRestaurantViewModel.insert(updatedRestaurant); // old one will be replaced
-        }else {
+        } else {
             Toast.makeText(
                     getApplicationContext(),
                     R.string.empty_not_saved,
