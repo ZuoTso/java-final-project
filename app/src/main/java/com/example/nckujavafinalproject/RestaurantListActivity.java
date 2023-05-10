@@ -115,12 +115,9 @@ public class RestaurantListActivity extends AppCompatActivity {
             Restaurant restaurant = new Restaurant(data.getStringExtra(NewRestaurantActivity.EXTRA_REPLY),"");
             mRestaurantViewModel.insert(restaurant);
         } else if(requestCode==UPDATE_RESTAURANT_ACTIVITY_REQUEST_CODE && resultCode==RESULT_OK) {
-            Log.v("INFO","updating");
             String name=data.getStringExtra(UpdateRestaurantActivity.EXTRA_REPLY_NAME);
             String labels=data.getStringExtra(UpdateRestaurantActivity.EXTRA_REPLY_LABELS);
 
-            Log.v("INFO",name);
-            Log.v("INFO",labels);
             Restaurant updatedRestaurant=new Restaurant(name,labels);
             mRestaurantViewModel.insert(updatedRestaurant); // old one will be replaced
         }else {
