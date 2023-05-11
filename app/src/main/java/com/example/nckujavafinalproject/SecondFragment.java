@@ -16,6 +16,7 @@ public class SecondFragment extends Fragment {
 
     private FragmentSecondBinding binding;
 
+
     @Override
     public View onCreateView(
             LayoutInflater inflater, ViewGroup container,
@@ -27,14 +28,21 @@ public class SecondFragment extends Fragment {
 
     }
 
+
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
         //接收抽籤結果的區域
-        Integer count = SecondFragmentArgs.fromBundle(getArguments()).getMyArg();
-        String countText =  count.toString();
-        TextView headerView = view.getRootView().findViewById(R.id.resultoutput);
-        headerView.setText(countText);
+        String RestaurantName = SecondFragmentArgs.fromBundle(getArguments()).getRestaurantName(); //中選餐廳名字
+        String picklabels = SecondFragmentArgs.fromBundle(getArguments()).getPicklabels(); //中選餐廳標籤
+        picklabels = picklabels.replace("`","   "); //將"`"換成空格
+        TextView NameView = view.getRootView().findViewById(R.id.RestaurantName);
+        NameView.setText(RestaurantName);
+
+        TextView labelsView = view.getRootView().findViewById(R.id.picklabels);
+        labelsView.setText(picklabels);
+
+
         //
 
         binding.buttonSecond.setOnClickListener(new View.OnClickListener() {
@@ -44,6 +52,23 @@ public class SecondFragment extends Fragment {
                         .navigate(R.id.action_SecondFragment_to_FirstFragment);
             }
         });
+
+        binding.buttonNO.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                NavHostFragment.findNavController(SecondFragment.this)
+                        .navigate(R.id.action_SecondFragment_to_FirstFragment);
+            }
+        });
+
+        binding.buttonYES.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                NavHostFragment.findNavController(SecondFragment.this)
+                        .navigate(R.id.action_SecondFragment_to_FirstFragment);
+            }
+        });
+
     }
 
     @Override
