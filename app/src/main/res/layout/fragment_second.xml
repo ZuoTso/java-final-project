@@ -8,7 +8,7 @@
     tools:context=".SecondFragment">
 
     <Button
-        android:id="@+id/button2"
+        android:id="@+id/buttonNO"
         style="@style/Widget.AppCompat.Button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -32,6 +32,7 @@
         android:background="#FFFFFF"
         android:text="@string/restaurant_information"
         android:textAlignment="center"
+        android:textAllCaps="false"
         android:textColor="@color/black"
         android:textSize="24sp"
         android:textStyle="bold|italic"
@@ -49,6 +50,7 @@
         android:layout_marginEnd="32dp"
         android:layout_marginBottom="64dp"
         android:text="@string/previous"
+        android:onClick="back_onclick"
         android:textAlignment="center"
         android:textColor="@color/background"
         android:textSize="20sp"
@@ -73,7 +75,7 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/buttonYES"
         style="@style/Widget.AppCompat.Button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -88,7 +90,7 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
-        android:id="@+id/resultoutput"
+        android:id="@+id/RestaurantName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/resultoutput"
@@ -100,6 +102,21 @@
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.459" />
+        app:layout_constraintVertical_bias="0.361" />
+
+    <TextView
+        android:id="@+id/picklabels"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="選取標籤"
+        android:textColor="@color/black"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.513" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
