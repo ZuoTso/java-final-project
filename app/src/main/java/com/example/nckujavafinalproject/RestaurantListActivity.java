@@ -30,6 +30,7 @@ public class RestaurantListActivity extends AppCompatActivity {
     public static final int UPDATE_RESTAURANT_ACTIVITY_REQUEST_CODE = 2;
 
     private RestaurantViewModel mRestaurantViewModel;
+    private final RestaurantListAdapter adapter = new RestaurantListAdapter(new RestaurantListAdapter.RestaurantDiff());
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,7 +41,7 @@ public class RestaurantListActivity extends AppCompatActivity {
 //        getApplicationContext().deleteDatabase("database");
 
         RecyclerView recyclerView = findViewById(R.id.recyclerview);
-        final RestaurantListAdapter adapter = new RestaurantListAdapter(new RestaurantListAdapter.RestaurantDiff());
+
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
@@ -217,10 +218,8 @@ public class RestaurantListActivity extends AppCompatActivity {
             Restaurant updatedRestaurant = new Restaurant(name, labels);
             mRestaurantViewModel.insert(updatedRestaurant); // old one will be replaced
         } else {
-            Toast.makeText(
-                    getApplicationContext(),
-                    R.string.empty_not_saved,
-                    Toast.LENGTH_LONG).show();
+            adapter.notifyDataSetChanged();
+            return;
         }
     }
 }
