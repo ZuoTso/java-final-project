@@ -23,4 +23,6 @@
     <string name="編輯標籤">編輯標籤</string>
     <string name="resultoutput">結果</string>
     <string name="title_activity_start">StartActivity</string>
+    <string name="nearby_restaurant">附近餐廳</string>
+    <string name="title_activity_bullshit">Bullshit</string>
 </resources>
