@@ -28,4 +28,11 @@ public class MainActivity extends AppCompatActivity {
         intent.setClass(MainActivity.this, LabelListActivity.class);
         startActivity(intent);
     }
+
+    // switch to map page
+    public void NearbyRestaurant_onclick(View view){
+        Intent intent = new Intent();
+        intent.setClass(MainActivity.this, NearbyRestaurantList.class);
+        startActivity(intent);
+    }
 }
