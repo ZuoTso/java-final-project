@@ -17,7 +17,6 @@ import com.google.android.gms.tasks.OnSuccessListener;
 
 public class MainActivity extends AppCompatActivity {
 
-    private Location currentLocation = null;
     private FusedLocationProviderClient fusedLocationClient;
 
     @Override
@@ -59,16 +58,12 @@ public class MainActivity extends AppCompatActivity {
                     2);
             return;
         } else {
-            updateCurrentLocation();
-            // TODO: send lat and lng to next activity
-
-            Intent intent = new Intent();
-            intent.setClass(MainActivity.this, NearbyRestaurantList.class);
-            startActivity(intent);
+            goToNearbyActivity();
         }
     }
 
-    private void updateCurrentLocation() {
+    // update current location and go to nearbyActivity
+    private void goToNearbyActivity() {
         // if no permission, return
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
@@ -81,7 +76,13 @@ public class MainActivity extends AppCompatActivity {
                         // Got last known location. In some rare situations this can be null.
                         if (location != null) {
                             // Logic to handle location object
-                            currentLocation = location;
+
+                            Intent intent = new Intent();
+                            intent.putExtra("lat",location.getLatitude());
+                            intent.putExtra("lng",location.getLongitude());
+
+                            intent.setClass(MainActivity.this, NearbyRestaurantList.class);
+                            startActivity(intent);
                         }
                     }
                 });
@@ -94,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
 
         // permission is granted
         if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            updateCurrentLocation();
+            goToNearbyActivity();
         } else {
         // declined
             Log.v("INFO", "permission declined");
