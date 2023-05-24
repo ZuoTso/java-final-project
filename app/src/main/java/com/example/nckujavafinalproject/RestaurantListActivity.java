@@ -23,6 +23,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.room.Update;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
 
@@ -81,11 +82,22 @@ public class RestaurantListActivity extends AppCompatActivity {
                                          int direction) {
                         int position = viewHolder.getAdapterPosition();
                         Restaurant myRestaurant = adapter.getRestaurantAtPosition(position);
-                        Toast.makeText(RestaurantListActivity.this, "Deleting " +
-                                myRestaurant.getName(), Toast.LENGTH_LONG).show();
+
 
                         // Delete the restaurant
                         mRestaurantViewModel.deleteRestaurant(myRestaurant);
+
+                        // Show undo button
+                        Snackbar.make(recyclerView, String.format("刪除 %s",myRestaurant.getName()),
+                                Snackbar.LENGTH_LONG).setAction("取消",new View.OnClickListener(){
+
+                            @Override
+                            public void onClick(View v) {
+                                mRestaurantViewModel.insert(myRestaurant);
+                                adapter.notifyDataSetChanged();
+                                recyclerView.scrollToPosition(position);
+                            }
+                        }).show();
                     }
 
                     @Override
