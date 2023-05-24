@@ -27,6 +27,10 @@ public class NewRestaurantActivity extends AppCompatActivity {
     private LabelViewModel mLabelViewModel;
     private ArrayList<String> checkedLabels=new ArrayList<>();;
 
+    private RestaurantViewModel mRestaurantViewModel;
+
+    private ArrayList<String> allRestaurantNames=new ArrayList<>();
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,15 +39,27 @@ public class NewRestaurantActivity extends AppCompatActivity {
 
         checkboxList=findViewById(R.id.checkbox_list);
 
+        // Get a new or existing ViewModel from the ViewModelProvider.
+        mRestaurantViewModel = new ViewModelProvider(this).get(RestaurantViewModel.class);
+
+        // get all restaurants
+        mRestaurantViewModel.getAllRestaurants().observe(this, restaurants -> {
+            for(int i=0;i<restaurants.size();i++){
+                allRestaurantNames.add(restaurants.get(i).getName());
+            }
+        });
+
         final Button button = findViewById(R.id.button_save);
         button.setOnClickListener(view -> {
             // trimmed
             final String restaurantName=mEditRestaurantView.getText().toString().trim();
 
-            // TODO: prevent restaurant with same name
             if (restaurantName.equals("")) {
-                // show invalid toast
                 Toast toast=Toast.makeText(getApplicationContext(),"餐廳名稱不可為空白",Toast.LENGTH_SHORT);
+                toast.show();
+                return;
+            }else if(allRestaurantNames.contains(restaurantName)){
+                Toast toast=Toast.makeText(getApplicationContext(),"餐廳名稱已存在",Toast.LENGTH_SHORT);
                 toast.show();
                 return;
             } else {
