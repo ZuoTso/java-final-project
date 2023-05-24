@@ -88,7 +88,7 @@ public class RestaurantListActivity extends AppCompatActivity {
                         mRestaurantViewModel.deleteRestaurant(myRestaurant);
 
                         // Show undo button
-                        Snackbar.make(recyclerView, String.format("刪除 %s",myRestaurant.getName()),
+                        Snackbar.make(recyclerView, String.format("刪除餐廳: %s",myRestaurant.getName()),
                                 Snackbar.LENGTH_LONG).setAction("取消",new View.OnClickListener(){
 
                             @Override
