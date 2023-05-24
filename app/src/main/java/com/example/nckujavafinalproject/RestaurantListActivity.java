@@ -123,8 +123,6 @@ public class RestaurantListActivity extends AppCompatActivity {
                                          int direction) {
                         int position = viewHolder.getAdapterPosition();
                         Restaurant myRestaurant = adapter.getRestaurantAtPosition(position);
-                        Toast.makeText(RestaurantListActivity.this, "Updating " +
-                                myRestaurant.getName(), Toast.LENGTH_LONG).show();
 
                         // switch to new activity
                         Intent intent = new Intent(RestaurantListActivity.this, UpdateRestaurantActivity.class);
