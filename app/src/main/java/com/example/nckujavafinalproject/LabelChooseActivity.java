@@ -25,26 +25,6 @@ public class LabelChooseActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private ArrayList<String> currentLabel;
 
-    // the function checking the current checkbox(home page label)
-    private void checkMatchingLabels(ArrayList<String> currentLabel) {
-        Log.d("LabelChooseActivity", "GGGG checkMatchingLabels start");
-        for (int i = 0; i < recyclerView.getChildCount(); i++) {
-            Log.d("LabelChooseActivity", "GGGG checkMatchingLabels running for");
-            View childView = recyclerView.getChildAt(i);
-            if (childView instanceof CheckBox) {
-                CheckBox checkBox = (CheckBox) childView;
-                String labelText = checkBox.getText().toString();
-                Log.d("LabelChooseActivity", "GGGG checkMatchingLabels running if1");
-
-                if (currentLabel.contains(labelText)) {
-                    checkBox.setChecked(true);
-                } else {
-                    checkBox.setChecked(false);
-                }
-            }
-        }
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -61,9 +41,7 @@ public class LabelChooseActivity extends AppCompatActivity {
         Intent intent = getIntent();
         if (intent != null && intent.hasExtra("currentLabel")) {
             currentLabel = intent.getStringArrayListExtra("currentLabel");
-        } /*else {
-            Log.d("LabelChooseActivity", "GGGG Received labels from MainActivity is failed");
-        }*/
+        }
         // Pass in all label data
         LabelViewModel labelViewModel = new ViewModelProvider(this).get(LabelViewModel.class);
         labelListLiveData = labelViewModel.getAllLabels();
@@ -87,8 +65,6 @@ public class LabelChooseActivity extends AppCompatActivity {
             checkboxContainer.addView(saveButton); // display save bottom
         });
 
-        // reply which Label be chosen
-        // 不知道會不會有小問題
         saveButton.setOnClickListener(view -> {
             Intent replyIntent = new Intent();
 

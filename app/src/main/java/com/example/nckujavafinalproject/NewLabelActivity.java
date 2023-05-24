@@ -18,8 +18,8 @@ public class NewLabelActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_new_restaurant);
-        mEditLabelView = findViewById(R.id.edit_restaurant);
+        setContentView(R.layout.activity_new_label);
+        mEditLabelView = findViewById(R.id.edit_label);
 
         final Button button = findViewById(R.id.button_save);
         button.setOnClickListener(view -> {

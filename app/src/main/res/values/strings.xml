@@ -1,30 +1,30 @@
 <resources>
-    <string name="app_name">NCKU Java Final Project</string>
+    <string name="app_name">不知道要吃什麼</string>
     <string name="action_settings">Settings</string>
     <!-- Strings used for fragments for navigation -->
     <string name="first_fragment_label">First Fragment</string>
     <string name="second_fragment_label">Second Fragment</string>
-    <string name="next">Next</string>
     <string name="previous">上一頁</string>
 
     <string name="hello_first_fragment">Hello first fragment</string>
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
-    <string name="add_word">New Word</string>
+    <string name="add_word">新餐廳</string>
     <string name="hint_word">Word...</string>
-    <string name="button_save">Save</string>
-    <string name="empty_not_saved">Word not saved because it is empty.</string>
+    <string name="button_save">儲存</string>
+    <string name="empty_not_saved">文字不能為空</string>
     <string name="token_choose">標籤選擇</string>
     <string name="開始抽">開始抽</string>
-    <string name="no">NO</string>
+    <string name="no">否</string>
     <string name="restaurant_information">餐廳資訊</string>
     <string name="like_this_choice">結果是否符合預期?</string>
-    <string name="yes">Yes</string>
+    <string name="yes">是</string>
     <string name="編輯餐廳">編輯餐廳</string>
     <string name="編輯標籤">編輯標籤</string>
     <string name="resultoutput">結果</string>
     <string name="title_activity_start">StartActivity</string>
     <string name="nearby_restaurant">附近餐廳</string>
-    <string name="title_activity_bullshit">Bullshit</string>
-    <string name="choose_label">Choose Label</string>
+    <string name="choose_label">標籤選擇</string>
     <string name="_100">100</string>
+    <string name="new_label_placeholder">標籤名稱</string>
+    <string name="new_restaurant_placeholder">餐廳名稱</string>
 </resources>
