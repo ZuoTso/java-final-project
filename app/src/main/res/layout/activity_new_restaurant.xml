@@ -31,6 +31,12 @@
             android:layout_margin="@dimen/big_padding"
             android:textColor="@color/buttonLabel" />
 
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/checkbox_list"/>
+
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
