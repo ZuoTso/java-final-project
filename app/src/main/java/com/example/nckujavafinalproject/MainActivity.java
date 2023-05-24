@@ -70,6 +70,7 @@ public class MainActivity extends AppCompatActivity {
                 currentLabel = data.getStringArrayListExtra("currentLabel");
 
                 // TODO: update filteredRestaraunts
+                // NOTE: if currentLabel is empty, filteredRestaurants= allRestaurants
             }
         }
     }
@@ -157,17 +158,17 @@ public class MainActivity extends AppCompatActivity {
 
     public void pickRestaurant_onclick(View view){
         int pick;
-        String RestaurantName;
-        String picklabels;
+        String restaurantName;
+        String pickedLabels=String.join(",",currentLabel);
 
         if (filteredRestaurants.size()==0){
-            RestaurantName="無符合標準的餐廳";
-            picklabels="無符合標準的標籤";
+            restaurantName="無符合標準的餐廳";
         }
+
+        // TODO: pick restaurant from filteredRestauraunts
         else {
             pick = (int) (Math.random() * (mAllRestaurants.size())); //隨機選取餐廳index
-            picklabels = mAllRestaurants.get(pick).getLabels(); //取得中選餐廳的標籤
-            RestaurantName = mAllRestaurants.get(pick).getName(); //取得中選餐廳的名字
+            restaurantName = mAllRestaurants.get(pick).getName(); //取得中選餐廳的名字
         }
 
         try {
@@ -176,7 +177,15 @@ public class MainActivity extends AppCompatActivity {
             throw new RuntimeException(e);
         }
         lottery.stop(); //停止轉盤畫面
-        Log.v("INFO","TODO: switch to result activity");
+
+        // switch activity
+        Intent intent = new Intent();
+
+        intent.putExtra("restaurantName",restaurantName);
+        intent.putExtra("pickedLabels",pickedLabels);
+
+        intent.setClass(MainActivity.this, RestaurantResultActivity.class);
+        startActivity(intent);
     }
 
 }
