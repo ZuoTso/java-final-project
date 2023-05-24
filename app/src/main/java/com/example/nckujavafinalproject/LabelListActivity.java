@@ -21,6 +21,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
 
 public class LabelListActivity extends AppCompatActivity {
 
@@ -83,11 +84,21 @@ public class LabelListActivity extends AppCompatActivity {
                                          int direction) {
                         int position = viewHolder.getAdapterPosition();
                         Label myLabel = adapter.getLabelAtPosition(position);
-                        Toast.makeText(LabelListActivity.this, "Deleting " +
-                                myLabel.getName(), Toast.LENGTH_LONG).show();
 
                         // Delete the word
                         mLabelViewModel.deleteLabel(myLabel);
+
+                        // Show undo button
+                        Snackbar.make(recyclerView, String.format("刪除標籤: %s", myLabel.getName()),
+                                Snackbar.LENGTH_LONG).setAction("取消", new View.OnClickListener() {
+
+                            @Override
+                            public void onClick(View v) {
+                                mLabelViewModel.insert(myLabel);
+                                adapter.notifyDataSetChanged();
+                                recyclerView.scrollToPosition(position);
+                            }
+                        }).show();
                     }
 
                     @Override
