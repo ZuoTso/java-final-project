@@ -24,6 +24,8 @@ import androidx.room.Update;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.util.ArrayList;
+
 public class RestaurantListActivity extends AppCompatActivity {
 
     public static final int NEW_RESTAURANT_ACTIVITY_REQUEST_CODE = 1;
@@ -209,7 +211,10 @@ public class RestaurantListActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == NEW_RESTAURANT_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK) {
-            Restaurant restaurant = new Restaurant(data.getStringExtra(NewRestaurantActivity.EXTRA_REPLY), "");
+            final ArrayList<String> checkedLabels=data.getStringArrayListExtra(NewRestaurantActivity.CHECKBOX_REPLY);
+            final String newLabel=String.join("`",checkedLabels);
+
+            Restaurant restaurant = new Restaurant(data.getStringExtra(NewRestaurantActivity.EXTRA_REPLY), newLabel);
             mRestaurantViewModel.insert(restaurant);
         } else if (requestCode == UPDATE_RESTAURANT_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK) {
             String name = data.getStringExtra(UpdateRestaurantActivity.EXTRA_REPLY_NAME);

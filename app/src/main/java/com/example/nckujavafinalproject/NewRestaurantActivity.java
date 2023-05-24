@@ -18,6 +18,7 @@ import java.util.ArrayList;
 public class NewRestaurantActivity extends AppCompatActivity {
 
     public static final String EXTRA_REPLY = "com.example.android.restaurantlistsql.REPLY";
+    public static final String CHECKBOX_REPLY="com.example.android.restaurantlistsql.REPLY.checkboxlist";
     private LinearLayout checkboxList;
 
     private EditText mEditRestaurantView;
@@ -40,8 +41,9 @@ public class NewRestaurantActivity extends AppCompatActivity {
             } else {
                 String restaurant = mEditRestaurantView.getText().toString();
                 replyIntent.putExtra(EXTRA_REPLY, restaurant);
+                replyIntent.putExtra(CHECKBOX_REPLY,checkedLabels);
+
                 setResult(RESULT_OK, replyIntent);
-                // TODO: send checked label to activity
             }
             finish();
         });
