@@ -4,11 +4,13 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
@@ -35,10 +37,17 @@ public class NewRestaurantActivity extends AppCompatActivity {
 
         final Button button = findViewById(R.id.button_save);
         button.setOnClickListener(view -> {
-            Intent replyIntent = new Intent();
-            if (TextUtils.isEmpty(mEditRestaurantView.getText())) {
-                setResult(RESULT_CANCELED, replyIntent);
+            // trimmed
+            final String restaurantName=mEditRestaurantView.getText().toString().trim();
+
+            // TODO: prevent restaurant with same name
+            if (restaurantName.equals("")) {
+                // show invalid toast
+                Toast toast=Toast.makeText(getApplicationContext(),"餐廳名稱不可為空白",Toast.LENGTH_SHORT);
+                toast.show();
+                return;
             } else {
+                Intent replyIntent = new Intent();
                 String restaurant = mEditRestaurantView.getText().toString();
                 replyIntent.putExtra(EXTRA_REPLY, restaurant);
                 replyIntent.putExtra(CHECKBOX_REPLY,checkedLabels);
