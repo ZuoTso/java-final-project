@@ -12,6 +12,11 @@
         android:theme="@style/Theme.NCKUJavaFinalProject"
         tools:targetApi="31">
         <activity
+            android:name=".LabelChooseActivity"
+            android:label="Label Choose Activity">
+        </activity>
+
+        <activity
             android:name=".NearbyRestaurantList"
             android:exported="false" />
         <activity

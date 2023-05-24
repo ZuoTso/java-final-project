@@ -15,16 +15,40 @@ import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
 
+import java.util.ArrayList;
+
 public class MainActivity extends AppCompatActivity {
 
     private FusedLocationProviderClient fusedLocationClient;
+    private static final int LABEL_CHOOSE_REQUEST_CODE = 1;
+
+    private ArrayList<String> currentLabel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        currentLabel = new ArrayList<>();
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(MainActivity.this);
+    }
+
+    // Receive the data returned by LabelChooseActivity
+    private void launchLabelChooseActivity() {
+        Intent intent = new Intent(MainActivity.this, LabelChooseActivity.class);
+        intent.putStringArrayListExtra("currentLabel", currentLabel);
+        startActivityForResult(intent, LABEL_CHOOSE_REQUEST_CODE);
+    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == LABEL_CHOOSE_REQUEST_CODE && resultCode == RESULT_OK) {
+            if (data != null && data.hasExtra("currentLabel")) {
+                currentLabel = data.getStringArrayListExtra("currentLabel");
+
+            }
+        }
     }
 
     // to restaurant page button
@@ -60,6 +84,11 @@ public class MainActivity extends AppCompatActivity {
         } else {
             goToNearbyActivity();
         }
+    }
+
+    // switch to choose label page
+    public void LabelChoose_onclick(View view) {
+        launchLabelChooseActivity();
     }
 
     // update current location and go to nearbyActivity
