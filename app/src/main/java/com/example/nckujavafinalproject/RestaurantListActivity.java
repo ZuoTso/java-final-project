@@ -40,8 +40,7 @@ public class RestaurantListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_restaurant_list);
 
-        // NOTE: un-comment this line to reset database
-//        getApplicationContext().deleteDatabase("database");
+        Toast.makeText(getApplicationContext(), "左滑編輯、右滑刪除", Toast.LENGTH_LONG).show();
 
         RecyclerView recyclerView = findViewById(R.id.recyclerview);
 

@@ -39,8 +39,7 @@ public class LabelListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_label_list);
 
-        // NOTE: un-comment this line to reset database
-//        getApplicationContext().deleteDatabase("database");
+        Toast.makeText(getApplicationContext(), "左右滑刪除", Toast.LENGTH_LONG).show();
 
         RecyclerView recyclerView = findViewById(R.id.recyclerview);
         final LabelListAdapter adapter = new LabelListAdapter(new LabelListAdapter.LabelDiff());
