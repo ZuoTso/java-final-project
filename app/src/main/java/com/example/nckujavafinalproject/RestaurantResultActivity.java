@@ -3,6 +3,7 @@ package com.example.nckujavafinalproject;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.fragment.NavHostFragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
@@ -14,6 +15,11 @@ public class RestaurantResultActivity extends AppCompatActivity {
 
     private TextView pickedLabelsText;
     private TextView restaurantNameText;
+
+    private void returnMainActivity(){
+        Intent intent=new Intent(RestaurantResultActivity.this,MainActivity.class);
+        startActivity(intent);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,7 +40,25 @@ public class RestaurantResultActivity extends AppCompatActivity {
 
         }
 
-        // TODO: event listeners
+        findViewById(R.id.buttonYES).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                returnMainActivity();
+            }
+        });
 
+        findViewById(R.id.buttonNO).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                returnMainActivity();
+            }
+        });
+
+        findViewById(R.id.buttonReturn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                returnMainActivity();
+            }
+        });
     }
 }
