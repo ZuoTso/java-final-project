@@ -25,4 +25,6 @@
     <string name="title_activity_start">StartActivity</string>
     <string name="nearby_restaurant">附近餐廳</string>
     <string name="title_activity_bullshit">Bullshit</string>
+    <string name="choose_label">Choose Label</string>
+    <string name="_100">100</string>
 </resources>

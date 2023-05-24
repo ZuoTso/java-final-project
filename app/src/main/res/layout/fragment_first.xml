@@ -20,6 +20,7 @@
         android:backgroundTint="@color/colorPrimary"
         android:textSize="20sp"
         android:textStyle="bold"
+        android:onClick="LabelChoose_onclick"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
