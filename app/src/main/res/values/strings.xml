@@ -25,4 +25,6 @@
     <string name="nearby_restaurant">附近餐廳</string>
     <string name="choose_label">標籤選擇</string>
     <string name="_100">100</string>
+    <string name="new_label_placeholder">標籤名稱</string>
+    <string name="new_restaurant_placeholder">餐廳名稱</string>
 </resources>
