@@ -3,19 +3,23 @@ package com.example.nckujavafinalproject;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.drawable.AnimationDrawable;
 import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -24,6 +28,13 @@ public class MainActivity extends AppCompatActivity {
 
     private ArrayList<String> currentLabel;
 
+    private RestaurantViewModel mRestaurantViewModel;
+
+    private List<Restaurant> mAllRestaurants = new ArrayList<Restaurant>();
+    private List<Restaurant> filteredRestaurants=new ArrayList<Restaurant>(); // after filtered with labels
+
+    private AnimationDrawable lottery; //轉盤
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,6 +42,17 @@ public class MainActivity extends AppCompatActivity {
         currentLabel = new ArrayList<>();
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(MainActivity.this);
+        mRestaurantViewModel = new ViewModelProvider(this).get(RestaurantViewModel.class);
+        mRestaurantViewModel.getAllRestaurants().observe(this,restaurants -> {
+            mAllRestaurants = restaurants;
+            filteredRestaurants=restaurants;
+        });
+
+        ImageView image = (ImageView) findViewById(R.id.image);
+        image.setBackgroundResource(R.drawable.animation);
+        lottery = (AnimationDrawable) image.getBackground();
+        lottery.stop();
+        lottery.start(); //開始轉動
     }
 
     // Receive the data returned by LabelChooseActivity
@@ -47,6 +69,7 @@ public class MainActivity extends AppCompatActivity {
             if (data != null && data.hasExtra("currentLabel")) {
                 currentLabel = data.getStringArrayListExtra("currentLabel");
 
+                // TODO: update filteredRestaraunts
             }
         }
     }
@@ -130,6 +153,30 @@ public class MainActivity extends AppCompatActivity {
             Log.v("INFO", "permission declined");
         }
         return;
+    }
+
+    public void pickRestaurant_onclick(View view){
+        int pick;
+        String RestaurantName;
+        String picklabels;
+
+        if (filteredRestaurants.size()==0){
+            RestaurantName="無符合標準的餐廳";
+            picklabels="無符合標準的標籤";
+        }
+        else {
+            pick = (int) (Math.random() * (mAllRestaurants.size())); //隨機選取餐廳index
+            picklabels = mAllRestaurants.get(pick).getLabels(); //取得中選餐廳的標籤
+            RestaurantName = mAllRestaurants.get(pick).getName(); //取得中選餐廳的名字
+        }
+
+        try {
+            Thread.sleep(500); //點級按鈕後，延遲0.5秒跳轉
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        lottery.stop(); //停止轉盤畫面
+        Log.v("INFO","TODO: switch to result activity");
     }
 
 }
