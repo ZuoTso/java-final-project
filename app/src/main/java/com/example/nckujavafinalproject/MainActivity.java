@@ -5,11 +5,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.lifecycle.ViewModelProvider;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.AnimationDrawable;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -27,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
     private FusedLocationProviderClient fusedLocationClient;
     private static final int LABEL_CHOOSE_REQUEST_CODE = 1;
 
-    private ArrayList<String> currentLabel;
+    private ArrayList<String> currentLabel=new ArrayList<String>();
 
     private RestaurantViewModel mRestaurantViewModel;
 
@@ -40,7 +43,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        currentLabel = new ArrayList<>();
+
+        SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
+        String savedLabels=sharedPref.getString("selectedLabels","");
+        Log.v("INFO",savedLabels);
+        currentLabel=new ArrayList<>(Arrays.asList(savedLabels.split("`")));
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(MainActivity.this);
         mRestaurantViewModel = new ViewModelProvider(this).get(RestaurantViewModel.class);
@@ -69,6 +76,12 @@ public class MainActivity extends AppCompatActivity {
         if (requestCode == LABEL_CHOOSE_REQUEST_CODE && resultCode == RESULT_OK) {
             if (data != null && data.hasExtra("currentLabel")) {
                 currentLabel = data.getStringArrayListExtra("currentLabel");
+
+                // save currentLabel to saved preference
+                SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPref.edit();
+                editor.putString("selectedLabels", String.join("`",currentLabel));
+                editor.apply();
 
                 // if currentLabel is empty, filteredRestaurants= allRestaurants
                 if(currentLabel.size()==0){
@@ -209,5 +222,4 @@ public class MainActivity extends AppCompatActivity {
         intent.setClass(MainActivity.this, RestaurantResultActivity.class);
         startActivity(intent);
     }
-
 }
