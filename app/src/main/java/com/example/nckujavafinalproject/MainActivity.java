@@ -59,7 +59,6 @@ public class MainActivity extends AppCompatActivity {
         ImageView image = (ImageView) findViewById(R.id.image);
         image.setBackgroundResource(R.drawable.animation);
         lottery = (AnimationDrawable) image.getBackground();
-        lottery.stop();
         lottery.start(); //開始轉動
     }
 
@@ -157,11 +156,13 @@ public class MainActivity extends AppCompatActivity {
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
+
         fusedLocationClient.getLastLocation()
                 .addOnSuccessListener(MainActivity.this, new OnSuccessListener<Location>() {
 
                     @Override
                     public void onSuccess(Location location) {
+
                         // Got last known location. In some rare situations this can be null.
                         if (location != null) {
                             // Logic to handle location object
@@ -169,6 +170,7 @@ public class MainActivity extends AppCompatActivity {
                             Intent intent = new Intent();
                             intent.putExtra("lat",location.getLatitude());
                             intent.putExtra("lng",location.getLongitude());
+
 
                             intent.setClass(MainActivity.this, NearbyRestaurantList.class);
                             startActivity(intent);
@@ -207,11 +209,11 @@ public class MainActivity extends AppCompatActivity {
         }
 
         try {
-            Thread.sleep(500); //點級按鈕後，延遲0.5秒跳轉
+            Thread.sleep(100); //點級按鈕後，延遲0.1秒跳轉
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
-        lottery.stop(); //停止轉盤畫面
+
 
         // switch activity
         Intent intent = new Intent();
