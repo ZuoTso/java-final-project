@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -24,8 +25,11 @@ public class NewLabelActivity extends AppCompatActivity {
         final Button button = findViewById(R.id.button_save);
         button.setOnClickListener(view -> {
             Intent replyIntent = new Intent();
-            if (TextUtils.isEmpty(mEditLabelView.getText())) {
-                setResult(RESULT_CANCELED, replyIntent);
+            final String labelName=mEditLabelView.getText().toString().trim();
+            if (labelName.length()==0) {
+                Toast emptyToast=Toast.makeText(getApplicationContext(),"標籤名稱不可為空白",Toast.LENGTH_SHORT);
+                emptyToast.show();
+                return;
             } else {
                 String label = mEditLabelView.getText().toString();
                 replyIntent.putExtra(EXTRA_REPLY, label);
