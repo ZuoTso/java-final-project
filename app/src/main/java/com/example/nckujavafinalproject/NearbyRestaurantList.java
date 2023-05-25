@@ -74,8 +74,9 @@ public class NearbyRestaurantList extends AppCompatActivity {
         // SECTION test fetching
         final int radius = 1500;
 
+        // only fetch opening restaurants
         String url = String.format(
-                "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=%f,%f&radius=%d&type=restaurant&key=%s",
+                "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=%f,%f&radius=%d&type=restaurant&opennow=true&language=language=zh-TW&key=%s",
                 currentLat,
                 currentLng,
                 radius,
@@ -97,18 +98,21 @@ public class NearbyRestaurantList extends AppCompatActivity {
             public void onResponse(Call call, Response response) throws IOException {
                 // Handle the response on the background thread
                 String responseBody = response.body().string();
-//                Log.v("INFO", responseBody);
+                Log.v("INFO", responseBody);
 
                 try {
                     JSONObject json = new JSONObject(responseBody);
                     JSONArray results = json.getJSONArray("results");
 
                     JSONArray filteredResults=new JSONArray();
+
                     for(int i=0;i<results.length();i++){
                         JSONObject obj = results.getJSONObject(i);
 
                         // filter restaurants with the same name
                         final String name=obj.getString("name");
+
+                        // filter existing
                         if(mAllRestaurantNames.contains(name)){
                             continue;
                         }
