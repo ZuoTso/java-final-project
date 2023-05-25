@@ -31,6 +31,8 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import okhttp3.Call;
@@ -95,7 +97,6 @@ public class NearbyRestaurantList extends AppCompatActivity {
                         String newRestaurantName = (newRestaurantString.split("\n"))[0]; //get name
                         Restaurant myRestaurant = new Restaurant(newRestaurantName,""); //creat restaurant,label is null
 
-                        Log.v("pick_name",myRestaurant.getName());
                         //如果餐廳已存在於清單中，會顯示提醒
                         if(allRestaurantNames.contains(myRestaurant.getName())){
                             Toast toast=Toast.makeText(getApplicationContext(),"餐廳已存在清單中",Toast.LENGTH_SHORT);
@@ -132,7 +133,6 @@ public class NearbyRestaurantList extends AppCompatActivity {
                         String newRestaurantName = (newRestaurantString.split("\n"))[0]; //get name
                         Restaurant myRestaurant = new Restaurant(newRestaurantName,""); //creat restaurant,label is null
 
-                        Log.v("pick_name",myRestaurant.getName());
                         //如果餐廳已存在於清單中，會顯示提醒
                         if(allRestaurantNames.contains(myRestaurant.getName())){
                             Toast toast=Toast.makeText(getApplicationContext(),"餐廳已存在清單中",Toast.LENGTH_SHORT);
@@ -157,11 +157,13 @@ public class NearbyRestaurantList extends AppCompatActivity {
         // SECTION get api key from local.properties
         String apiKey = BuildConfig.MAPS_API_KEY;
 
+        Log.v("INFO","fetching");
+
         // SECTION test fetching
         final int radius = 1500;
 
         String url = String.format(
-                "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=%f,%f&radius=%d&type=restaurant&key=%s",
+                "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=%f,%f&radius=%d&type=restaurant&opennow=true&language=language=zh-TW&key=%s",
                 currentLat,
                 currentLng,
                 radius,
@@ -183,38 +185,91 @@ public class NearbyRestaurantList extends AppCompatActivity {
             public void onResponse(Call call, Response response) throws IOException {
                 // Handle the response on the background thread
                 String responseBody = response.body().string();
-                Log.v("INFO", responseBody);
 
                 try {
                     JSONObject json = new JSONObject(responseBody);
                     JSONArray results = json.getJSONArray("results");
-                    for (int i = 0; i < results.length(); i++) {
+
+                    // filter existed restaurants
+                    JSONArray filteredResults=new JSONArray();
+                    for(int i=0;i<results.length();i++){
                         JSONObject obj = results.getJSONObject(i);
+
+                        // filter restaurants with the same name
+                        final String name=obj.getString("name");
+                        if(allRestaurantNames.contains(name)){
+                            continue;
+                        }
+                        filteredResults.put(obj);
+                    }
+
+                    // add distance to every object
+                    try {
+                        for (int i = 0; i < filteredResults.length(); i++) {
+                            JSONObject obj = filteredResults.getJSONObject(i);
+
+                            JSONObject geometry = obj.getJSONObject("geometry");
+                            JSONObject location = geometry.getJSONObject("location");
+                            double lat = location.getDouble("lat");
+                            double lng = location.getDouble("lng");
+
+                            double curLat = currentLat;
+                            double curLong = currentLng;
+                            long distance=Math.round(calculateDistance(curLat, curLong, lat, lng));
+                            obj.put("distance", distance);
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                    // sort array by distance
+                    try {
+                        List<JSONObject> jsonValues = new ArrayList<>();
+                        for (int i = 0; i < filteredResults.length(); i++) {
+                            jsonValues.add(filteredResults.getJSONObject(i));
+                        }
+
+                        Collections.sort(jsonValues, new Comparator<JSONObject>() {
+                            private static final String KEY_DISTANCE = "distance";
+
+                            @Override
+                            public int compare(JSONObject a, JSONObject b) {
+                                int distanceA = a.optInt(KEY_DISTANCE, 0);
+                                int distanceB = b.optInt(KEY_DISTANCE, 0);
+                                return Integer.compare(distanceA, distanceB);
+                            }
+                        });
+
+                        // Clear the original JSONArray and add the sorted objects back
+                        filteredResults = new JSONArray();
+                        for (JSONObject jsonObject : jsonValues) {
+                            filteredResults.put(jsonObject);
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                    // format the string to show
+
+                    for (int i = 0; i < filteredResults.length(); i++) {
+                        JSONObject obj = filteredResults.getJSONObject(i);
+
+                        // name and rating
                         String name = obj.getString("name");
                         String rating = String.valueOf(obj.getDouble("rating"));
-                        float rating_total_ = obj.getInt("user_ratings_total");
-                        String rating_total;
-                        if(rating_total_>999){
-                            rating_total_ =rating_total_/1000;
-                            rating_total = String.valueOf(rating_total_);
-                            rating_total=String.format("%.3sk",rating_total);
+
+                        // rating count
+                        float ratingCount = obj.getInt("user_ratings_total");
+                        String ratingCountText;
+                        if(ratingCount>999){
+                            ratingCountText=String.format("%.1fk",ratingCount/1000);
+                        } else{
+                            ratingCountText=String.format("%.0f",ratingCount);
                         }
-                        else{ rating_total = String.valueOf(rating_total_);
-                            rating_total=String.format("%.3s",rating_total);
-                        }
-                        JSONObject geometry = obj.getJSONObject("geometry");
-                        JSONObject location = geometry.getJSONObject("location");
-                        double lat = location.getDouble("lat");
-                        double lng = location.getDouble("lng");
 
-                        double curLat = currentLat;
-                        double curLong = currentLng;
+                        String distance = obj.getInt("distance") + "m";
 
-                        String distance = String.valueOf(Math.round(calculateDistance(curLat, curLong, lat, lng)))
-                                + "m";
-
-
-                        Restaurantinformation.add( String.format("%s\n %s/5.0(%s) %16.5s", name, rating,rating_total, distance));
+                        Restaurantinformation.add( String.format("%s\n %s/5.0 ( %s ) %16.5s", name, rating,ratingCountText, distance));
                     }
                 } catch (JSONException e) {
                     throw new RuntimeException(e);
@@ -225,7 +280,6 @@ public class NearbyRestaurantList extends AppCompatActivity {
                     // Update UI here
                     adapter.submitList(Restaurantinformation);
                     adapter.setRestaurants(Restaurantinformation);
-
                 });
             }
         });
@@ -286,7 +340,6 @@ public class NearbyRestaurantList extends AppCompatActivity {
         int deleteIconLeft = itemView.getRight() - deleteIconMargin - intrinsicWidth;
         int deleteIconRight = itemView.getRight() - deleteIconMargin;
         int deleteIconBottom = deleteIconTop + intrinsicHeight;
-        Log.v("left","check");
         deleteDrawable.setBounds(deleteIconLeft, deleteIconTop, deleteIconRight, deleteIconBottom);
         deleteDrawable.draw(c);
 
@@ -345,4 +398,9 @@ public class NearbyRestaurantList extends AppCompatActivity {
         adapter.setRestaurants(Restaurantinformation);
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        tutorialToast.cancel();
+    }
 }
