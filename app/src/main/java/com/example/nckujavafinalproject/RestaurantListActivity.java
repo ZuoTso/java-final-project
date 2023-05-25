@@ -35,12 +35,15 @@ public class RestaurantListActivity extends AppCompatActivity {
     private RestaurantViewModel mRestaurantViewModel;
     private final RestaurantListAdapter adapter = new RestaurantListAdapter(new RestaurantListAdapter.RestaurantDiff());
 
+    private Toast tutorialToast =null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_restaurant_list);
 
-        Toast.makeText(getApplicationContext(), "左滑編輯、右滑刪除", Toast.LENGTH_LONG).show();
+        tutorialToast=Toast.makeText(getApplicationContext(), "左滑編輯、右滑刪除", Toast.LENGTH_LONG);
+        tutorialToast.show();
 
         RecyclerView recyclerView = findViewById(R.id.recyclerview);
 
@@ -235,5 +238,11 @@ public class RestaurantListActivity extends AppCompatActivity {
             adapter.notifyDataSetChanged();
             return;
         }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        tutorialToast.cancel();
     }
 }

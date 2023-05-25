@@ -30,6 +30,8 @@ public class LabelListActivity extends AppCompatActivity {
         RIGHT
     }
 
+    private Toast tutorialToast =null;
+
     public static final int NEW_LABEL_ACTIVITY_REQUEST_CODE = 1;
 
     private LabelViewModel mLabelViewModel;
@@ -39,7 +41,8 @@ public class LabelListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_label_list);
 
-        Toast.makeText(getApplicationContext(), "左右滑刪除", Toast.LENGTH_LONG).show();
+        tutorialToast =Toast.makeText(getApplicationContext(), "左右滑刪除", Toast.LENGTH_LONG);
+        tutorialToast.show();
 
         RecyclerView recyclerView = findViewById(R.id.recyclerview);
         final LabelListAdapter adapter = new LabelListAdapter(new LabelListAdapter.LabelDiff());
@@ -179,11 +182,12 @@ public class LabelListActivity extends AppCompatActivity {
         if (requestCode == NEW_LABEL_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK) {
             Label label = new Label(data.getStringExtra(NewLabelActivity.EXTRA_REPLY));
             mLabelViewModel.insert(label);
-        } else {
-            Toast.makeText(
-                    getApplicationContext(),
-                    R.string.empty_not_saved,
-                    Toast.LENGTH_LONG).show();
         }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        tutorialToast.cancel();
     }
 }

@@ -2,6 +2,7 @@ package com.example.nckujavafinalproject;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -31,6 +32,10 @@ public class NearbyRestaurantList extends AppCompatActivity {
 
     private double currentLat = 0;
     private double currentLng = 0;
+    private RestaurantViewModel mRestaurantViewModel;
+
+    private List<String> mAllRestaurantNames = new ArrayList<String>();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +54,15 @@ public class NearbyRestaurantList extends AppCompatActivity {
 
         currentLat = getIntent().getDoubleExtra("lat", 0.0);
         currentLng = getIntent().getDoubleExtra("lng", 0.0);
+
+        mRestaurantViewModel = new ViewModelProvider(this).get(RestaurantViewModel.class);
+
+
+        mRestaurantViewModel.getAllRestaurants().observe(this,restaurants -> {
+            for(Restaurant r:restaurants){
+                mAllRestaurantNames.add(r.getName());
+            }
+        });
         // request data with current location
         fetchData();
     }
@@ -60,8 +74,9 @@ public class NearbyRestaurantList extends AppCompatActivity {
         // SECTION test fetching
         final int radius = 1500;
 
+        // only fetch opening restaurants
         String url = String.format(
-                "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=%f,%f&radius=%d&type=restaurant&key=%s",
+                "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=%f,%f&radius=%d&type=restaurant&opennow=true&language=language=zh-TW&key=%s",
                 currentLat,
                 currentLng,
                 radius,
@@ -88,6 +103,23 @@ public class NearbyRestaurantList extends AppCompatActivity {
                 try {
                     JSONObject json = new JSONObject(responseBody);
                     JSONArray results = json.getJSONArray("results");
+
+                    JSONArray filteredResults=new JSONArray();
+
+                    for(int i=0;i<results.length();i++){
+                        JSONObject obj = results.getJSONObject(i);
+
+                        // filter restaurants with the same name
+                        final String name=obj.getString("name");
+
+                        // filter existing
+                        if(mAllRestaurantNames.contains(name)){
+                            continue;
+                        }
+                        filteredResults.put(obj);
+                    }
+
+
                 } catch (JSONException e) {
                     throw new RuntimeException(e);
                 }
