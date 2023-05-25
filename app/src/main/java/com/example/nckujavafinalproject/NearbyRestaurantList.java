@@ -358,4 +358,9 @@ public class NearbyRestaurantList extends AppCompatActivity {
         adapter.setRestaurants(Restaurantinformation);
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        tutorialToast.cancel();
+    }
 }
