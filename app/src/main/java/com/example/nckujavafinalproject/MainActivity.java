@@ -19,6 +19,7 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -69,8 +70,30 @@ public class MainActivity extends AppCompatActivity {
             if (data != null && data.hasExtra("currentLabel")) {
                 currentLabel = data.getStringArrayListExtra("currentLabel");
 
-                // TODO: update filteredRestaraunts
-                // NOTE: if currentLabel is empty, filteredRestaurants= allRestaurants
+                // if currentLabel is empty, filteredRestaurants= allRestaurants
+                if(currentLabel.size()==0){
+                    filteredRestaurants=mAllRestaurants;
+                    return;
+                }
+
+                // reset array list
+                filteredRestaurants=new ArrayList<Restaurant>();
+
+                // filter restaurants by labels
+                for(Restaurant restaurant:mAllRestaurants){
+                    List<String> restaurantLabels= Arrays.asList(restaurant.getLabels().split("`"));
+                    boolean containLabels=true;
+
+                    for(String labelName:currentLabel){
+                        if(!restaurantLabels.contains(labelName)){
+                            containLabels=false;
+                            break;
+                        }
+                    }
+                    if(containLabels) {
+                        filteredRestaurants.add(restaurant);
+                    }
+                }
             }
         }
     }
@@ -165,10 +188,9 @@ public class MainActivity extends AppCompatActivity {
             restaurantName="無符合標準的餐廳";
         }
 
-        // TODO: pick restaurant from filteredRestauraunts
         else {
-            pick = (int) (Math.random() * (mAllRestaurants.size())); //隨機選取餐廳index
-            restaurantName = mAllRestaurants.get(pick).getName(); //取得中選餐廳的名字
+            pick = (int) (Math.random() * (filteredRestaurants.size())); //隨機選取餐廳index
+            restaurantName = filteredRestaurants.get(pick).getName(); //取得中選餐廳的名字
         }
 
         try {
