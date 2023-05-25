@@ -31,6 +31,8 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import okhttp3.Call;
@@ -201,7 +203,53 @@ public class NearbyRestaurantList extends AppCompatActivity {
                         filteredResults.put(obj);
                     }
 
+                    // add distance to every object
+                    try {
+                        for (int i = 0; i < filteredResults.length(); i++) {
+                            JSONObject obj = filteredResults.getJSONObject(i);
 
+                            JSONObject geometry = obj.getJSONObject("geometry");
+                            JSONObject location = geometry.getJSONObject("location");
+                            double lat = location.getDouble("lat");
+                            double lng = location.getDouble("lng");
+
+                            double curLat = currentLat;
+                            double curLong = currentLng;
+                            long distance=Math.round(calculateDistance(curLat, curLong, lat, lng));
+                            obj.put("distance", distance);
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                    // sort array by distance
+                    try {
+                        List<JSONObject> jsonValues = new ArrayList<>();
+                        for (int i = 0; i < filteredResults.length(); i++) {
+                            jsonValues.add(filteredResults.getJSONObject(i));
+                        }
+
+                        Collections.sort(jsonValues, new Comparator<JSONObject>() {
+                            private static final String KEY_DISTANCE = "distance";
+
+                            @Override
+                            public int compare(JSONObject a, JSONObject b) {
+                                int distanceA = a.optInt(KEY_DISTANCE, 0);
+                                int distanceB = b.optInt(KEY_DISTANCE, 0);
+                                return Integer.compare(distanceA, distanceB);
+                            }
+                        });
+
+                        // Clear the original JSONArray and add the sorted objects back
+                        filteredResults = new JSONArray();
+                        for (JSONObject jsonObject : jsonValues) {
+                            filteredResults.put(jsonObject);
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                    // format the string to show
 
                     for (int i = 0; i < filteredResults.length(); i++) {
                         JSONObject obj = filteredResults.getJSONObject(i);
@@ -219,18 +267,7 @@ public class NearbyRestaurantList extends AppCompatActivity {
                             ratingCountText=String.format("%.0f",ratingCount);
                         }
 
-                        // distance
-                        JSONObject geometry = obj.getJSONObject("geometry");
-                        JSONObject location = geometry.getJSONObject("location");
-                        double lat = location.getDouble("lat");
-                        double lng = location.getDouble("lng");
-
-                        double curLat = currentLat;
-                        double curLong = currentLng;
-
-                        String distance = String.valueOf(Math.round(calculateDistance(curLat, curLong, lat, lng)))
-                                + "m";
-
+                        String distance = obj.getInt("distance") + "m";
 
                         Restaurantinformation.add( String.format("%s\n %s/5.0 ( %s ) %16.5s", name, rating,ratingCountText, distance));
                     }
