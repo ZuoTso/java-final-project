@@ -95,7 +95,6 @@ public class NearbyRestaurantList extends AppCompatActivity {
                         String newRestaurantName = (newRestaurantString.split("\n"))[0]; //get name
                         Restaurant myRestaurant = new Restaurant(newRestaurantName,""); //creat restaurant,label is null
 
-                        Log.v("pick_name",myRestaurant.getName());
                         //如果餐廳已存在於清單中，會顯示提醒
                         if(allRestaurantNames.contains(myRestaurant.getName())){
                             Toast toast=Toast.makeText(getApplicationContext(),"餐廳已存在清單中",Toast.LENGTH_SHORT);
@@ -132,7 +131,6 @@ public class NearbyRestaurantList extends AppCompatActivity {
                         String newRestaurantName = (newRestaurantString.split("\n"))[0]; //get name
                         Restaurant myRestaurant = new Restaurant(newRestaurantName,""); //creat restaurant,label is null
 
-                        Log.v("pick_name",myRestaurant.getName());
                         //如果餐廳已存在於清單中，會顯示提醒
                         if(allRestaurantNames.contains(myRestaurant.getName())){
                             Toast toast=Toast.makeText(getApplicationContext(),"餐廳已存在清單中",Toast.LENGTH_SHORT);
@@ -157,11 +155,13 @@ public class NearbyRestaurantList extends AppCompatActivity {
         // SECTION get api key from local.properties
         String apiKey = BuildConfig.MAPS_API_KEY;
 
+        Log.v("INFO","fetching");
+
         // SECTION test fetching
         final int radius = 1500;
 
         String url = String.format(
-                "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=%f,%f&radius=%d&type=restaurant&key=%s",
+                "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=%f,%f&radius=%d&type=restaurant&opennow=true&language=language=zh-TW&key=%s",
                 currentLat,
                 currentLng,
                 radius,
@@ -183,13 +183,28 @@ public class NearbyRestaurantList extends AppCompatActivity {
             public void onResponse(Call call, Response response) throws IOException {
                 // Handle the response on the background thread
                 String responseBody = response.body().string();
-                Log.v("INFO", responseBody);
 
                 try {
                     JSONObject json = new JSONObject(responseBody);
                     JSONArray results = json.getJSONArray("results");
-                    for (int i = 0; i < results.length(); i++) {
+
+                    // filter existed restaurants
+                    JSONArray filteredResults=new JSONArray();
+                    for(int i=0;i<results.length();i++){
                         JSONObject obj = results.getJSONObject(i);
+
+                        // filter restaurants with the same name
+                        final String name=obj.getString("name");
+                        if(allRestaurantNames.contains(name)){
+                            continue;
+                        }
+                        filteredResults.put(obj);
+                    }
+
+
+
+                    for (int i = 0; i < filteredResults.length(); i++) {
+                        JSONObject obj = filteredResults.getJSONObject(i);
                         String name = obj.getString("name");
                         String rating = String.valueOf(obj.getDouble("rating"));
                         float rating_total_ = obj.getInt("user_ratings_total");
@@ -225,7 +240,6 @@ public class NearbyRestaurantList extends AppCompatActivity {
                     // Update UI here
                     adapter.submitList(Restaurantinformation);
                     adapter.setRestaurants(Restaurantinformation);
-
                 });
             }
         });
@@ -286,7 +300,6 @@ public class NearbyRestaurantList extends AppCompatActivity {
         int deleteIconLeft = itemView.getRight() - deleteIconMargin - intrinsicWidth;
         int deleteIconRight = itemView.getRight() - deleteIconMargin;
         int deleteIconBottom = deleteIconTop + intrinsicHeight;
-        Log.v("left","check");
         deleteDrawable.setBounds(deleteIconLeft, deleteIconTop, deleteIconRight, deleteIconBottom);
         deleteDrawable.draw(c);
 
