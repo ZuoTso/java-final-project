@@ -205,18 +205,21 @@ public class NearbyRestaurantList extends AppCompatActivity {
 
                     for (int i = 0; i < filteredResults.length(); i++) {
                         JSONObject obj = filteredResults.getJSONObject(i);
+
+                        // name and rating
                         String name = obj.getString("name");
                         String rating = String.valueOf(obj.getDouble("rating"));
-                        float rating_total_ = obj.getInt("user_ratings_total");
-                        String rating_total;
-                        if(rating_total_>999){
-                            rating_total_ =rating_total_/1000;
-                            rating_total = String.valueOf(rating_total_);
-                            rating_total=String.format("%.3sk",rating_total);
+
+                        // rating count
+                        float ratingCount = obj.getInt("user_ratings_total");
+                        String ratingCountText;
+                        if(ratingCount>999){
+                            ratingCountText=String.format("%.1fk",ratingCount/1000);
+                        } else{
+                            ratingCountText=String.format("%.0f",ratingCount);
                         }
-                        else{ rating_total = String.valueOf(rating_total_);
-                            rating_total=String.format("%.3s",rating_total);
-                        }
+
+                        // distance
                         JSONObject geometry = obj.getJSONObject("geometry");
                         JSONObject location = geometry.getJSONObject("location");
                         double lat = location.getDouble("lat");
@@ -229,7 +232,7 @@ public class NearbyRestaurantList extends AppCompatActivity {
                                 + "m";
 
 
-                        Restaurantinformation.add( String.format("%s\n %s/5.0(%s) %16.5s", name, rating,rating_total, distance));
+                        Restaurantinformation.add( String.format("%s\n %s/5.0 ( %s ) %16.5s", name, rating,ratingCountText, distance));
                     }
                 } catch (JSONException e) {
                     throw new RuntimeException(e);
