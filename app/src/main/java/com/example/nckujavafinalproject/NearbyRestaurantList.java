@@ -250,15 +250,29 @@ public class NearbyRestaurantList extends AppCompatActivity {
 
                         // name and rating
                         String name = obj.getString("name");
-                        String rating = String.valueOf(obj.getDouble("rating"));
+                        String rating="";
+                        try {
+                            rating = String.valueOf(obj.getDouble("rating"));
+                        }catch(JSONException e){
+                            Log.e("Place API","One of the restaurants has no rating");
+                            rating="?";
+                        }
 
                         // rating count
-                        float ratingCount = obj.getInt("user_ratings_total");
-                        String ratingCountText;
-                        if(ratingCount>999){
-                            ratingCountText=String.format("%.1fk",ratingCount/1000);
-                        } else{
-                            ratingCountText=String.format("%.0f",ratingCount);
+                        double ratingCount=0.0;
+                        String ratingCountText="";
+
+                        try {
+                            ratingCount = obj.getInt("user_ratings_total");
+                            if (ratingCount > 999) {
+                                ratingCountText = String.format("%.1fk", ratingCount / 1000);
+                            } else {
+                                ratingCountText = String.format("%.0f", ratingCount);
+                            }
+                        }catch(JSONException e){
+                            Log.e("Place API","restaurant doesn't have user_ratings_total");
+                            ratingCount=0.0;
+                            ratingCountText="?";
                         }
 
                         String distance = obj.getInt("distance") + "m";
