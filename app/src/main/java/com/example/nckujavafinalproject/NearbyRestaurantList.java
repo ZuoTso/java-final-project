@@ -157,13 +157,11 @@ public class NearbyRestaurantList extends AppCompatActivity {
         // SECTION get api key from local.properties
         String apiKey = BuildConfig.MAPS_API_KEY;
 
-        Log.v("INFO","fetching");
-
         // SECTION test fetching
         final int radius = 1500;
 
         String url = String.format(
-                "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=%f,%f&radius=%d&type=restaurant&opennow=true&language=language=zh-TW&key=%s",
+                "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=%f,%f&radius=%d&type=restaurant|food|cafe&opennow=true&language=language=zh-TW&key=%s",
                 currentLat,
                 currentLng,
                 radius,
