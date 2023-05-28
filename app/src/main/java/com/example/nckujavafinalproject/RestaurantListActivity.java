@@ -53,13 +53,15 @@ public class RestaurantListActivity extends AppCompatActivity {
         // Get a new or existing ViewModel from the ViewModelProvider.
         mRestaurantViewModel = new ViewModelProvider(this).get(RestaurantViewModel.class);
 
-        // Add an observer on the LiveData returned by getAllRestaurants.
-        // The onChanged() method fires when the observed data changes and the activity is
-        // in the foreground.
         mRestaurantViewModel.getAllRestaurants().observe(this, restaurants -> {
             // Update the cached copy of the restaurants in the adapter.
             adapter.submitList(restaurants);
             adapter.setRestaurants(restaurants);
+            if(restaurants.size()==0){
+                tutorialToast.cancel();
+                tutorialToast=Toast.makeText(this,"清單內沒有餐廳，點右下角按鈕以新增",Toast.LENGTH_LONG);
+                tutorialToast.show();
+            }
         });
 
         FloatingActionButton fab = findViewById(R.id.fab);

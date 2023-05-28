@@ -56,10 +56,14 @@ public class NearbyRestaurantList extends AppCompatActivity {
     private ArrayList<String> allRestaurantNames=new ArrayList<>();
     private Toast tutorialToast =null;
 
+    private Toast noRestaurantToast=null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_nearby_restaurant_list);
+
+        noRestaurantToast=Toast.makeText(getApplicationContext(),"附近沒有餐廳",Toast.LENGTH_LONG);
 
         tutorialToast=Toast.makeText(getApplicationContext(), "左右滑將餐廳加入清單", Toast.LENGTH_LONG);
         tutorialToast.show();
@@ -97,10 +101,6 @@ public class NearbyRestaurantList extends AppCompatActivity {
                         String newRestaurantName = (newRestaurantString.split("\n"))[0]; //get name
                         Restaurant myRestaurant = new Restaurant(newRestaurantName,""); //creat restaurant,label is null
 
-                        //如果餐廳已存在於清單中，會顯示提醒
-                        if(allRestaurantNames.contains(myRestaurant.getName())){
-                            Toast toast=Toast.makeText(getApplicationContext(),"餐廳已存在清單中",Toast.LENGTH_SHORT);
-                            toast.show();}
                         // switch to new activity
                         Intent intent = new Intent(NearbyRestaurantList.this, UpdateRestaurantActivity.class);
                         // pass restaurant to update activity
@@ -133,10 +133,6 @@ public class NearbyRestaurantList extends AppCompatActivity {
                         String newRestaurantName = (newRestaurantString.split("\n"))[0]; //get name
                         Restaurant myRestaurant = new Restaurant(newRestaurantName,""); //creat restaurant,label is null
 
-                        //如果餐廳已存在於清單中，會顯示提醒
-                        if(allRestaurantNames.contains(myRestaurant.getName())){
-                            Toast toast=Toast.makeText(getApplicationContext(),"餐廳已存在清單中",Toast.LENGTH_SHORT);
-                            toast.show();}
                         // switch to new activity
                         Intent intent = new Intent(NearbyRestaurantList.this, UpdateRestaurantActivity.class);
                         // pass restaurant to update activity
@@ -157,13 +153,11 @@ public class NearbyRestaurantList extends AppCompatActivity {
         // SECTION get api key from local.properties
         String apiKey = BuildConfig.MAPS_API_KEY;
 
-        Log.v("INFO","fetching");
-
         // SECTION test fetching
         final int radius = 1500;
 
         String url = String.format(
-                "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=%f,%f&radius=%d&type=restaurant&opennow=true&language=language=zh-TW&key=%s",
+                "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=%f,%f&radius=%d&type=restaurant|food|cafe&opennow=true&language=language=zh-TW&key=%s",
                 currentLat,
                 currentLng,
                 radius,
@@ -185,13 +179,13 @@ public class NearbyRestaurantList extends AppCompatActivity {
             public void onResponse(Call call, Response response) throws IOException {
                 // Handle the response on the background thread
                 String responseBody = response.body().string();
+                JSONArray filteredResults=new JSONArray();
 
                 try {
                     JSONObject json = new JSONObject(responseBody);
                     JSONArray results = json.getJSONArray("results");
 
                     // filter existed restaurants
-                    JSONArray filteredResults=new JSONArray();
                     for(int i=0;i<results.length();i++){
                         JSONObject obj = results.getJSONObject(i);
 
@@ -256,15 +250,29 @@ public class NearbyRestaurantList extends AppCompatActivity {
 
                         // name and rating
                         String name = obj.getString("name");
-                        String rating = String.valueOf(obj.getDouble("rating"));
+                        String rating="";
+                        try {
+                            rating = String.valueOf(obj.getDouble("rating"));
+                        }catch(JSONException e){
+                            Log.e("Place API","One of the restaurants has no rating");
+                            rating="?";
+                        }
 
                         // rating count
-                        float ratingCount = obj.getInt("user_ratings_total");
-                        String ratingCountText;
-                        if(ratingCount>999){
-                            ratingCountText=String.format("%.1fk",ratingCount/1000);
-                        } else{
-                            ratingCountText=String.format("%.0f",ratingCount);
+                        double ratingCount=0.0;
+                        String ratingCountText="";
+
+                        try {
+                            ratingCount = obj.getInt("user_ratings_total");
+                            if (ratingCount > 999) {
+                                ratingCountText = String.format("%.1fk", ratingCount / 1000);
+                            } else {
+                                ratingCountText = String.format("%.0f", ratingCount);
+                            }
+                        }catch(JSONException e){
+                            Log.e("Place API","restaurant doesn't have user_ratings_total");
+                            ratingCount=0.0;
+                            ratingCountText="?";
                         }
 
                         String distance = obj.getInt("distance") + "m";
@@ -275,11 +283,18 @@ public class NearbyRestaurantList extends AppCompatActivity {
                     throw new RuntimeException(e);
                 }
 
+                JSONArray finalFilteredResults = filteredResults;
                 // Update the UI if needed (switch to the main thread)
                 runOnUiThread(() -> {
                     // Update UI here
                     adapter.submitList(Restaurantinformation);
                     adapter.setRestaurants(Restaurantinformation);
+
+                    // show no restaurant toast
+                    if(finalFilteredResults.length()==0){
+                        tutorialToast.cancel();
+                        noRestaurantToast.show();
+                    }
                 });
             }
         });
@@ -402,5 +417,6 @@ public class NearbyRestaurantList extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
         tutorialToast.cancel();
+        noRestaurantToast.cancel();
     }
 }
