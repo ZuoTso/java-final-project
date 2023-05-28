@@ -52,13 +52,17 @@ public class LabelListActivity extends AppCompatActivity {
         // Get a new or existing ViewModel from the ViewModelProvider.
         mLabelViewModel = new ViewModelProvider(this).get(LabelViewModel.class);
 
-        // Add an observer on the LiveData returned by getAllLabels.
-        // The onChanged() method fires when the observed data changes and the activity is
-        // in the foreground.
         mLabelViewModel.getAllLabels().observe(this, labels -> {
             // Update the cached copy of the labels in the adapter.
             adapter.submitList(labels);
             adapter.setLabels(labels);
+
+            if(labels.size()==0){
+                // if there's nothing in list, remove last one and show new tutorial toast
+                tutorialToast.cancel();
+                tutorialToast=Toast.makeText(this,"清單內沒有標籤，點右下角按鈕以新增",Toast.LENGTH_LONG);
+                tutorialToast.show();
+            }
         });
 
         FloatingActionButton fab = findViewById(R.id.labelListFab);
