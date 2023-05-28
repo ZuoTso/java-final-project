@@ -56,10 +56,14 @@ public class NearbyRestaurantList extends AppCompatActivity {
     private ArrayList<String> allRestaurantNames=new ArrayList<>();
     private Toast tutorialToast =null;
 
+    private Toast noRestaurantToast=null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_nearby_restaurant_list);
+
+        noRestaurantToast=Toast.makeText(getApplicationContext(),"附近沒有餐廳",Toast.LENGTH_LONG);
 
         tutorialToast=Toast.makeText(getApplicationContext(), "左右滑將餐廳加入清單", Toast.LENGTH_LONG);
         tutorialToast.show();
@@ -97,10 +101,6 @@ public class NearbyRestaurantList extends AppCompatActivity {
                         String newRestaurantName = (newRestaurantString.split("\n"))[0]; //get name
                         Restaurant myRestaurant = new Restaurant(newRestaurantName,""); //creat restaurant,label is null
 
-                        //如果餐廳已存在於清單中，會顯示提醒
-                        if(allRestaurantNames.contains(myRestaurant.getName())){
-                            Toast toast=Toast.makeText(getApplicationContext(),"餐廳已存在清單中",Toast.LENGTH_SHORT);
-                            toast.show();}
                         // switch to new activity
                         Intent intent = new Intent(NearbyRestaurantList.this, UpdateRestaurantActivity.class);
                         // pass restaurant to update activity
@@ -133,10 +133,6 @@ public class NearbyRestaurantList extends AppCompatActivity {
                         String newRestaurantName = (newRestaurantString.split("\n"))[0]; //get name
                         Restaurant myRestaurant = new Restaurant(newRestaurantName,""); //creat restaurant,label is null
 
-                        //如果餐廳已存在於清單中，會顯示提醒
-                        if(allRestaurantNames.contains(myRestaurant.getName())){
-                            Toast toast=Toast.makeText(getApplicationContext(),"餐廳已存在清單中",Toast.LENGTH_SHORT);
-                            toast.show();}
                         // switch to new activity
                         Intent intent = new Intent(NearbyRestaurantList.this, UpdateRestaurantActivity.class);
                         // pass restaurant to update activity
@@ -183,13 +179,13 @@ public class NearbyRestaurantList extends AppCompatActivity {
             public void onResponse(Call call, Response response) throws IOException {
                 // Handle the response on the background thread
                 String responseBody = response.body().string();
+                JSONArray filteredResults=new JSONArray();
 
                 try {
                     JSONObject json = new JSONObject(responseBody);
                     JSONArray results = json.getJSONArray("results");
 
                     // filter existed restaurants
-                    JSONArray filteredResults=new JSONArray();
                     for(int i=0;i<results.length();i++){
                         JSONObject obj = results.getJSONObject(i);
 
@@ -273,11 +269,18 @@ public class NearbyRestaurantList extends AppCompatActivity {
                     throw new RuntimeException(e);
                 }
 
+                JSONArray finalFilteredResults = filteredResults;
                 // Update the UI if needed (switch to the main thread)
                 runOnUiThread(() -> {
                     // Update UI here
                     adapter.submitList(Restaurantinformation);
                     adapter.setRestaurants(Restaurantinformation);
+
+                    // show no restaurant toast
+                    if(finalFilteredResults.length()==0){
+                        tutorialToast.cancel();
+                        noRestaurantToast.show();
+                    }
                 });
             }
         });
@@ -400,5 +403,6 @@ public class NearbyRestaurantList extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
         tutorialToast.cancel();
+        noRestaurantToast.cancel();
     }
 }
