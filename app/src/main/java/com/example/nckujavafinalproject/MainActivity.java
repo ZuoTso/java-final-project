@@ -2,6 +2,7 @@ package com.example.nckujavafinalproject;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.app.ActivityCompat;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -44,11 +45,16 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // remove dark mode
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+
         SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
         String savedLabels=sharedPref.getString("selectedLabels","");
-        Log.v("INFO",savedLabels);
-        currentLabel=new ArrayList<>(Arrays.asList(savedLabels.split("`")));
-
+        if(savedLabels.equals("")) {
+            currentLabel=new ArrayList<>();
+        }else{
+            currentLabel = new ArrayList<>(Arrays.asList(savedLabels.split("`")));
+        }
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(MainActivity.this);
         mRestaurantViewModel = new ViewModelProvider(this).get(RestaurantViewModel.class);
         mRestaurantViewModel.getAllRestaurants().observe(this,restaurants -> {
@@ -82,30 +88,6 @@ public class MainActivity extends AppCompatActivity {
                 editor.putString("selectedLabels", String.join("`",currentLabel));
                 editor.apply();
 
-                // if currentLabel is empty, filteredRestaurants= allRestaurants
-                if(currentLabel.size()==0){
-                    filteredRestaurants=mAllRestaurants;
-                    return;
-                }
-
-                // reset array list
-                filteredRestaurants=new ArrayList<Restaurant>();
-
-                // filter restaurants by labels
-                for(Restaurant restaurant:mAllRestaurants){
-                    List<String> restaurantLabels= Arrays.asList(restaurant.getLabels().split("`"));
-                    boolean containLabels=true;
-
-                    for(String labelName:currentLabel){
-                        if(!restaurantLabels.contains(labelName)){
-                            containLabels=false;
-                            break;
-                        }
-                    }
-                    if(containLabels) {
-                        filteredRestaurants.add(restaurant);
-                    }
-                }
             }
         }
     }
@@ -198,6 +180,33 @@ public class MainActivity extends AppCompatActivity {
         int pick;
         String restaurantName;
         String pickedLabels=String.join(",",currentLabel);
+
+        // SECTION filter restaurants
+        // if currentLabel is empty, filteredRestaurants= allRestaurants
+        if(currentLabel.size()==0){
+            filteredRestaurants=mAllRestaurants;
+        }else {
+            // reset array list
+            filteredRestaurants = new ArrayList<Restaurant>();
+
+            // filter restaurants by labels
+            for (Restaurant restaurant : mAllRestaurants) {
+                List<String> restaurantLabels = Arrays.asList(restaurant.getLabels().split("`"));
+                boolean containLabels = true;
+
+                for (String labelName : currentLabel) {
+                    if (!restaurantLabels.contains(labelName)) {
+                        containLabels = false;
+                        break;
+                    }
+                }
+                if (containLabels) {
+                    filteredRestaurants.add(restaurant);
+                }
+            }
+        }
+
+        // SECTION pick restaurant
 
         if (filteredRestaurants.size()==0){
             restaurantName="無符合標準的餐廳";
