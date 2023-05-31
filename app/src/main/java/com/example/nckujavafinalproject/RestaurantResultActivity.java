@@ -54,11 +54,5 @@ public class RestaurantResultActivity extends AppCompatActivity {
             }
         });
 
-        findViewById(R.id.buttonReturn).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                returnMainActivity();
-            }
-        });
     }
 }
