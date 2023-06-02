@@ -58,6 +58,8 @@ public class NearbyRestaurantList extends AppCompatActivity {
 
     private Toast noRestaurantToast=null;
 
+    private TextView stateText=null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,6 +69,8 @@ public class NearbyRestaurantList extends AppCompatActivity {
 
         tutorialToast=Toast.makeText(getApplicationContext(), "左右滑將餐廳加入清單", Toast.LENGTH_LONG);
         tutorialToast.show();
+
+        stateText=findViewById(R.id.stateText);
 
         recyclerView = findViewById(R.id.recyclerview);
         recyclerView.setAdapter(adapter);
@@ -172,6 +176,7 @@ public class NearbyRestaurantList extends AppCompatActivity {
 
             @Override
             public void onFailure(Call call, IOException e) {
+                stateText.setText("獲得餐廳失敗，請檢查你的網路");
                 e.printStackTrace();
             }
 
@@ -289,6 +294,8 @@ public class NearbyRestaurantList extends AppCompatActivity {
                     // Update UI here
                     adapter.submitList(Restaurantinformation);
                     adapter.setRestaurants(Restaurantinformation);
+
+                    stateText.setText(""); // hide the loading text
 
                     // show no restaurant toast
                     if(finalFilteredResults.length()==0){
